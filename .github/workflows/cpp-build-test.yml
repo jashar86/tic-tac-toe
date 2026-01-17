@@ -1,0 +1,50 @@
+name: C++ Build and Test
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'cpp/**'
+      - '.github/workflows/cpp-build-test.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'cpp/**'
+      - '.github/workflows/cpp-build-test.yml'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake g++ build-essential
+
+    - name: Configure CMake
+      working-directory: cpp
+      run: |
+        mkdir -p build
+        cd build
+        cmake ..
+
+    - name: Build project
+      working-directory: cpp/build
+      run: make
+
+    - name: Run tests
+      working-directory: cpp/build
+      run: ctest --output-on-failure --verbose
+
+    - name: Test Summary
+      if: always()
+      working-directory: cpp/build
+      run: |
+        echo "==================================="
+        echo "Test Results Summary"
+        echo "==================================="
+        ctest --output-on-failure || true
