@@ -1,0 +1,80 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "CMake Configure",
+			"type": "shell",
+			"command": "cmake",
+			"args": [
+				"-S",
+				"${workspaceFolder}/cpp",
+				"-B",
+				"${workspaceFolder}/cpp/build"
+			],
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "Build All",
+			"type": "shell",
+			"command": "cmake",
+			"args": [
+				"--build",
+				"${workspaceFolder}/cpp/build"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"dependsOn": ["CMake Configure"],
+			"problemMatcher": ["$gcc"]
+		},
+		{
+			"label": "Build TicTacToe",
+			"type": "shell",
+			"command": "cmake",
+			"args": [
+				"--build",
+				"${workspaceFolder}/cpp/build",
+				"--target",
+				"tictactoe"
+			],
+			"group": "build",
+			"dependsOn": ["CMake Configure"],
+			"problemMatcher": ["$gcc"]
+		},
+		{
+			"label": "Build Tests",
+			"type": "shell",
+			"command": "cmake",
+			"args": [
+				"--build",
+				"${workspaceFolder}/cpp/build",
+				"--target",
+				"board_test"
+			],
+			"group": "build",
+			"dependsOn": ["CMake Configure"],
+			"problemMatcher": ["$gcc"]
+		},
+		{
+			"label": "Run Tests",
+			"type": "shell",
+			"command": "${workspaceFolder}/cpp/build/board_test",
+			"group": "test",
+			"dependsOn": ["Build Tests"],
+			"problemMatcher": []
+		},
+		{
+			"label": "Clean",
+			"type": "shell",
+			"command": "rm",
+			"args": [
+				"-rf",
+				"${workspaceFolder}/cpp/build"
+			],
+			"group": "build",
+			"problemMatcher": []
+		}
+	]
+}
