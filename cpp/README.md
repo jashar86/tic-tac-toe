@@ -8,17 +8,29 @@ A command-line implementation of the classic Tic-Tac-Toe game written in C++.
 cpp/
 ├── CMakeLists.txt          # CMake build configuration
 ├── include/
-│   └── TicTacToe.h        # Game class header
+│   ├── Board.h            # Board class header (game board logic)
+│   └── TicTacToe.h        # Game class header (game flow)
 ├── src/
 │   ├── main.cpp           # Entry point
+│   ├── Board.cpp          # Board logic implementation
 │   └── TicTacToe.cpp      # Game logic implementation
+├── tests/
+│   └── BoardTest.cpp      # Google Test unit tests for Board class
 └── README.md              # This file
 ```
+
+## Architecture
+
+The game uses a modular design with clear separation of concerns:
+
+- **Board**: Manages the game board state, move validation, and win/draw detection. This class is optimized for future AI player implementation.
+- **TicTacToe**: Handles game flow, player turns, and user interaction.
 
 ## Requirements
 
 - C++ compiler with C++11 support (g++, clang++, etc.)
-- CMake 3.10 or higher
+- CMake 3.14 or higher
+- Internet connection (for first build to download Google Test)
 
 ## Building
 
@@ -36,8 +48,39 @@ make
 
 ```bash
 cd cpp
-g++ -std=c++11 -I include src/main.cpp src/TicTacToe.cpp -o tictactoe
+g++ -std=c++11 -I include src/main.cpp src/TicTacToe.cpp src/Board.cpp -o tictactoe
 ```
+
+## Testing
+
+The project includes comprehensive unit tests using Google Test framework.
+
+### Building and Running Tests
+
+```bash
+cd cpp/build
+cmake ..
+make
+ctest --output-on-failure
+```
+
+Or run the test executable directly for more detailed output:
+
+```bash
+./board_test
+```
+
+### Test Coverage
+
+The Board class has comprehensive test coverage including:
+- Initial state validation
+- Position validation
+- Cell operations (get, set, isEmpty)
+- Win detection (all rows, columns, and diagonals)
+- Draw detection
+- Board reset
+- Move counting
+- Invalid input handling
 
 ## Running
 
@@ -75,3 +118,6 @@ After building, run the executable:
 - Draw detection
 - Play multiple rounds
 - Clean, readable console interface
+- Modular architecture with separate Board class (optimized for future AI implementation)
+- Comprehensive unit tests using Google Test
+- CMake build system with integrated testing

@@ -1,17 +1,12 @@
 #ifndef TICTACTOE_H
 #define TICTACTOE_H
 
-#include <vector>
-#include <string>
+#include "Board.h"
 
 class TicTacToe {
 private:
-    std::vector<std::vector<char>> board;
+    Board board;
     char currentPlayer;
-    int movesCount;
-
-    bool checkWin() const;
-    bool checkDraw() const;
 
 public:
     TicTacToe();
@@ -22,6 +17,7 @@ public:
     char getWinner() const;
     char getCurrentPlayer() const;
     void reset();
+    const Board& getBoard() const;
 };
 
 #endif // TICTACTOE_H
