@@ -2,7 +2,9 @@ name: C++ Build and Test
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - 'claude/**'
     paths:
       - 'cpp/**'
       - '.github/workflows/cpp-build-test.yml'
