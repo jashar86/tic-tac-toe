@@ -1,0 +1,32 @@
+{
+	"name": "C++ Tic-Tac-Toe Development",
+	"image": "mcr.microsoft.com/devcontainers/cpp:1-debian-12",
+
+	"features": {
+		"ghcr.io/devcontainers/features/git:1": {}
+	},
+
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.cpptools",
+				"ms-vscode.cmake-tools",
+				"twxs.cmake",
+				"ms-vscode.cpptools-extension-pack"
+			],
+			"settings": {
+				"cmake.configureOnOpen": true,
+				"cmake.buildDirectory": "${workspaceFolder}/cpp/build",
+				"C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
+			}
+		}
+	},
+
+	"postCreateCommand": "cd cpp && mkdir -p build && cd build && cmake .. && make",
+
+	"remoteUser": "vscode",
+
+	"mounts": [
+		"source=${localWorkspaceFolder}/cpp,target=/workspaces/${localWorkspaceFolderBasename}/cpp,type=bind,consistency=cached"
+	]
+}
