@@ -3,13 +3,14 @@
 
 #include <vector>
 #include <string>
+#include "Player.h"
 
 /**
  * @class Board
  * @brief Represents a 3x3 Tic-Tac-Toe game board.
  *
- * The Board class encapsulates all board state and game logic for Tic-Tac-Toe.
- * It manages the 3x3 grid of cells, validates moves, detects win/draw conditions,
+ * The Board class encapsulates board state for Tic-Tac-Toe.
+ * It manages the 3x3 grid of cells, validates moves, detects win conditions,
  * and provides board representation. This class is designed to be independent of
  * game flow logic, making it suitable for AI player implementation.
  *
@@ -20,25 +21,23 @@
  * Example usage:
  * @code
  *   Board board;
- *   board.setCell(0, 0, 'X');  // Place X in top-left
- *   board.setCell(1, 1, 'O');  // Place O in center
- *   if (board.hasWinner()) {
- *       char winner = board.getWinner();
+ *   board.setCell(0, 0, Player::X);  // Place X in top-left
+ *   board.setCell(1, 1, Player::O);  // Place O in center
+ *   Player winner = board.getWinner();
+ *   if (winner != Player::NONE) {
  *       // Handle win
  *   }
  * @endcode
  */
 class Board {
 private:
-    std::vector<std::vector<char>> cells;  ///< 3x3 grid storing cell states (' ', 'X', or 'O')
-    int moveCount;                         ///< Number of moves made on the board
+    std::vector<std::vector<Player>> cells;  ///< 3x3 grid storing cell states
 
 public:
     /**
      * @brief Constructs a new empty Board.
      *
-     * Initializes a 3x3 board with all cells empty (space character).
-     * Move count is set to 0.
+     * Initializes a 3x3 board with all cells set to Player::NONE.
      */
     Board();
 
@@ -49,24 +48,23 @@ public:
      *
      * @param row The row index (0-2)
      * @param col The column index (0-2)
-     * @param player The player's mark ('X' or 'O')
+     * @param player The player (Player::X or Player::O)
      * @return true if the move was successful, false if the position is invalid
      *         or already occupied
      *
      * This method validates the position and checks if the cell is empty before
-     * placing the mark. On success, increments the move count.
+     * placing the mark.
      */
-    bool setCell(int row, int col, char player);
+    bool setCell(int row, int col, Player player);
 
     /**
      * @brief Gets the current value of a cell.
      *
      * @param row The row index (0-2)
      * @param col The column index (0-2)
-     * @return The cell value (' ' for empty, 'X', or 'O'), or '\0' if the
-     *         position is invalid
+     * @return The cell value (Player::NONE for empty, Player::X, or Player::O)
      */
-    char getCell(int row, int col) const;
+    Player getCell(int row, int col) const;
 
     /**
      * @brief Checks if a cell is empty.
@@ -89,48 +87,30 @@ public:
     /**
      * @brief Resets the board to initial empty state.
      *
-     * Clears all cells (sets to space character) and resets move count to 0.
+     * Clears all cells (sets to Player::NONE).
      */
     void reset();
 
-    // Game state checks
+    // Board state queries
 
     /**
-     * @brief Checks if there is a winner on the board.
+     * @brief Checks if the board is completely filled.
      *
-     * @return true if any player has three marks in a row (horizontally,
-     *         vertically, or diagonally), false otherwise
+     * @return true if all 9 cells have been filled, false otherwise
+     */
+    bool isFull() const;
+
+    /**
+     * @brief Gets the winning player.
+     *
+     * @return The winning player (Player::X or Player::O), or Player::NONE if no winner
      *
      * This checks all possible win conditions:
      * - 3 rows (horizontal)
      * - 3 columns (vertical)
      * - 2 diagonals
      */
-    bool hasWinner() const;
-
-    /**
-     * @brief Checks if the board is completely filled.
-     *
-     * @return true if all 9 cells have been filled (moveCount == 9), false otherwise
-     */
-    bool isFull() const;
-
-    /**
-     * @brief Gets the winning player's mark.
-     *
-     * @return The winning player's mark ('X' or 'O'), or ' ' if there is no winner
-     *
-     * Note: This method should only be called after hasWinner() returns true.
-     * If called when there is no winner, returns ' '.
-     */
-    char getWinner() const;
-
-    /**
-     * @brief Gets the total number of moves made on the board.
-     *
-     * @return The number of non-empty cells (0-9)
-     */
-    int getMoveCount() const;
+    Player getWinner() const;
 
     // Board representation
 
@@ -158,7 +138,7 @@ public:
      * Useful for AI algorithms that need to analyze the board state.
      * Returns a copy to prevent external modification of internal state.
      */
-    std::vector<std::vector<char>> getCells() const;
+    std::vector<std::vector<Player>> getCells() const;
 };
 
 #endif // BOARD_H

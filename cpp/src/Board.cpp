@@ -1,11 +1,11 @@
 #include "Board.h"
 #include <sstream>
 
-Board::Board() : moveCount(0) {
-    cells = std::vector<std::vector<char>>(3, std::vector<char>(3, ' '));
+Board::Board() {
+    cells = std::vector<std::vector<Player>>(3, std::vector<Player>(3, Player::NONE));
 }
 
-bool Board::setCell(int row, int col, char player) {
+bool Board::setCell(int row, int col, Player player) {
     if (!isValidPosition(row, col)) {
         return false;
     }
@@ -15,13 +15,12 @@ bool Board::setCell(int row, int col, char player) {
     }
 
     cells[row][col] = player;
-    moveCount++;
     return true;
 }
 
-char Board::getCell(int row, int col) const {
+Player Board::getCell(int row, int col) const {
     if (!isValidPosition(row, col)) {
-        return '\0';
+        return Player::NONE;
     }
     return cells[row][col];
 }
@@ -30,7 +29,7 @@ bool Board::isCellEmpty(int row, int col) const {
     if (!isValidPosition(row, col)) {
         return false;
     }
-    return cells[row][col] == ' ';
+    return cells[row][col] == Player::NONE;
 }
 
 bool Board::isValidPosition(int row, int col) const {
@@ -38,53 +37,24 @@ bool Board::isValidPosition(int row, int col) const {
 }
 
 void Board::reset() {
-    cells = std::vector<std::vector<char>>(3, std::vector<char>(3, ' '));
-    moveCount = 0;
-}
-
-bool Board::hasWinner() const {
-    // Check rows
-    for (int i = 0; i < 3; i++) {
-        if (cells[i][0] != ' ' &&
-            cells[i][0] == cells[i][1] &&
-            cells[i][1] == cells[i][2]) {
-            return true;
-        }
-    }
-
-    // Check columns
-    for (int j = 0; j < 3; j++) {
-        if (cells[0][j] != ' ' &&
-            cells[0][j] == cells[1][j] &&
-            cells[1][j] == cells[2][j]) {
-            return true;
-        }
-    }
-
-    // Check diagonals
-    if (cells[0][0] != ' ' &&
-        cells[0][0] == cells[1][1] &&
-        cells[1][1] == cells[2][2]) {
-        return true;
-    }
-
-    if (cells[0][2] != ' ' &&
-        cells[0][2] == cells[1][1] &&
-        cells[1][1] == cells[2][0]) {
-        return true;
-    }
-
-    return false;
+    cells = std::vector<std::vector<Player>>(3, std::vector<Player>(3, Player::NONE));
 }
 
 bool Board::isFull() const {
-    return moveCount == 9;
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (cells[i][j] == Player::NONE) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
-char Board::getWinner() const {
+Player Board::getWinner() const {
     // Check rows
     for (int i = 0; i < 3; i++) {
-        if (cells[i][0] != ' ' &&
+        if (cells[i][0] != Player::NONE &&
             cells[i][0] == cells[i][1] &&
             cells[i][1] == cells[i][2]) {
             return cells[i][0];
@@ -93,7 +63,7 @@ char Board::getWinner() const {
 
     // Check columns
     for (int j = 0; j < 3; j++) {
-        if (cells[0][j] != ' ' &&
+        if (cells[0][j] != Player::NONE &&
             cells[0][j] == cells[1][j] &&
             cells[1][j] == cells[2][j]) {
             return cells[0][j];
@@ -101,23 +71,19 @@ char Board::getWinner() const {
     }
 
     // Check diagonals
-    if (cells[0][0] != ' ' &&
+    if (cells[0][0] != Player::NONE &&
         cells[0][0] == cells[1][1] &&
         cells[1][1] == cells[2][2]) {
         return cells[0][0];
     }
 
-    if (cells[0][2] != ' ' &&
+    if (cells[0][2] != Player::NONE &&
         cells[0][2] == cells[1][1] &&
         cells[1][1] == cells[2][0]) {
         return cells[0][2];
     }
 
-    return ' ';
-}
-
-int Board::getMoveCount() const {
-    return moveCount;
+    return Player::NONE;
 }
 
 std::string Board::toString() const {
@@ -125,7 +91,14 @@ std::string Board::toString() const {
     for (int i = 0; i < 3; i++) {
         oss << " ";
         for (int j = 0; j < 3; j++) {
-            oss << cells[i][j];
+            // Convert Player enum to display character
+            char displayChar = ' ';
+            if (cells[i][j] == Player::X) {
+                displayChar = 'X';
+            } else if (cells[i][j] == Player::O) {
+                displayChar = 'O';
+            }
+            oss << displayChar;
             if (j < 2) oss << " | ";
         }
         oss << "\n";
@@ -134,6 +107,6 @@ std::string Board::toString() const {
     return oss.str();
 }
 
-std::vector<std::vector<char>> Board::getCells() const {
+std::vector<std::vector<Player>> Board::getCells() const {
     return cells;
 }

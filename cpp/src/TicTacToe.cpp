@@ -1,7 +1,7 @@
 #include "TicTacToe.h"
 #include <iostream>
 
-TicTacToe::TicTacToe() : currentPlayer('X') {
+TicTacToe::TicTacToe() : currentPlayer(Player::X) {
 }
 
 void TicTacToe::displayBoard() const {
@@ -14,27 +14,27 @@ bool TicTacToe::makeMove(int row, int col) {
     }
 
     if (!isGameOver()) {
-        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+        currentPlayer = (currentPlayer == Player::X) ? Player::O : Player::X;
     }
 
     return true;
 }
 
 bool TicTacToe::isGameOver() const {
-    return board.hasWinner() || board.isFull();
+    return board.getWinner() != Player::NONE || board.isFull();
 }
 
-char TicTacToe::getWinner() const {
+Player TicTacToe::getWinner() const {
     return board.getWinner();
 }
 
-char TicTacToe::getCurrentPlayer() const {
+Player TicTacToe::getCurrentPlayer() const {
     return currentPlayer;
 }
 
 void TicTacToe::reset() {
     board.reset();
-    currentPlayer = 'X';
+    currentPlayer = Player::X;
 }
 
 const Board& TicTacToe::getBoard() const {

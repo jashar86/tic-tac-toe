@@ -1,10 +1,17 @@
 #include "TicTacToe.h"
+#include "Player.h"
 #include <iostream>
 #include <limits>
 
 void clearInput() {
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
+
+char playerToChar(Player player) {
+    if (player == Player::X) return 'X';
+    if (player == Player::O) return 'O';
+    return ' ';
 }
 
 int main() {
@@ -28,7 +35,7 @@ int main() {
         while (!game.isGameOver()) {
             game.displayBoard();
 
-            std::cout << "Player " << game.getCurrentPlayer() << "'s turn\n";
+            std::cout << "Player " << playerToChar(game.getCurrentPlayer()) << "'s turn\n";
             std::cout << "Enter position (1-9): ";
 
             int position;
@@ -53,9 +60,9 @@ int main() {
 
         game.displayBoard();
 
-        char winner = game.getWinner();
-        if (winner != ' ') {
-            std::cout << "Player " << winner << " wins! Congratulations!\n";
+        Player winner = game.getWinner();
+        if (winner != Player::NONE) {
+            std::cout << "Player " << playerToChar(winner) << " wins! Congratulations!\n";
         } else {
             std::cout << "It's a draw!\n";
         }

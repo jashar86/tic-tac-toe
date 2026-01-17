@@ -2,6 +2,7 @@
 #define TICTACTOE_H
 
 #include "Board.h"
+#include "Player.h"
 
 /**
  * @class TicTacToe
@@ -11,7 +12,7 @@
  * move processing, game state management, and user interaction. It uses the Board
  * class to manage the actual board state and game rules.
  *
- * The game alternates between two players: 'X' (who goes first) and 'O'.
+ * The game alternates between two players: Player::X (who goes first) and Player::O.
  * After each valid move, the current player switches unless the game ends.
  *
  * Example usage:
@@ -22,8 +23,8 @@
  *       // Move successful
  *   }
  *   if (game.isGameOver()) {
- *       char winner = game.getWinner();
- *       if (winner != ' ') {
+ *       Player winner = game.getWinner();
+ *       if (winner != Player::NONE) {
  *           // Winner found
  *       } else {
  *           // Draw
@@ -34,13 +35,13 @@
 class TicTacToe {
 private:
     Board board;           ///< The game board
-    char currentPlayer;    ///< Current player's mark ('X' or 'O')
+    Player currentPlayer;  ///< Current player (Player::X or Player::O)
 
 public:
     /**
      * @brief Constructs a new TicTacToe game.
      *
-     * Initializes an empty board with 'X' as the starting player.
+     * Initializes an empty board with Player::X as the starting player.
      */
     TicTacToe();
 
@@ -75,24 +76,24 @@ public:
     /**
      * @brief Gets the winning player.
      *
-     * @return The winning player's mark ('X' or 'O'), or ' ' if no winner
+     * @return The winning player (Player::X or Player::O), or Player::NONE if no winner
      *
      * Should be called after isGameOver() returns true to determine if there
      * was a winner or a draw.
      */
-    char getWinner() const;
+    Player getWinner() const;
 
     /**
-     * @brief Gets the current player's mark.
+     * @brief Gets the current player.
      *
-     * @return 'X' or 'O' indicating whose turn it is
+     * @return Player::X or Player::O indicating whose turn it is
      */
-    char getCurrentPlayer() const;
+    Player getCurrentPlayer() const;
 
     /**
      * @brief Resets the game to initial state.
      *
-     * Clears the board and sets the current player back to 'X'.
+     * Clears the board and sets the current player back to Player::X.
      * Use this to start a new game.
      */
     void reset();
