@@ -204,6 +204,52 @@ classDiagram
         DRAW
     }
 
+    %% Concrete Agent Implementations
+    class HumanAgent {
+        +HumanAgent()
+        +getNextMove(board: Board, marker_type: Marker): Position
+        -promptUser(marker: Marker): Position
+        -parseInput(input: string): Position
+        -validateInput(input: string): bool
+    }
+
+    class RandomAgent {
+        +RandomAgent()
+        +getNextMove(board: Board, marker_type: Marker): Position
+        -getAvailablePositions(board: Board): List~Position~
+        -selectRandom(positions: List~Position~): Position
+    }
+
+    class MinimaxAgent {
+        +MinimaxAgent()
+        +getNextMove(board: Board, marker_type: Marker): Position
+        -minimax(board: Board, depth: int, isMaximizing: bool, marker: Marker): int
+        -evaluateBoard(board: Board, marker: Marker): int
+        -getBestMove(board: Board, marker: Marker): Position
+    }
+
+    %% Concrete Display Implementations
+    class ConsoleDisplay {
+        +ConsoleDisplay()
+        +render(state: GameState): void
+        +showError(err: Error): void
+        -formatBoard(board: Board): string
+        -printGrid(board: Board): void
+        -displayPlayerInfo(player: Player): void
+    }
+
+    class GUIDisplay {
+        -Window window
+        -GridPanel gridPanel
+        +GUIDisplay()
+        +render(state: GameState): void
+        +showError(err: Error): void
+        -updateGridVisual(board: Board): void
+        -showDialog(message: string): void
+        -updateScorePanel(state: GameState): void
+    }
+
+    %% Core Relationships
     Game --> GameController
     Game --> Agent
     Game --> Display
@@ -216,7 +262,7 @@ classDiagram
     GameState --> Board
     GameState --> Player
     GameState --> GameStatus
-    
+
     Board ..> Position
     Board ..> Marker
 
@@ -225,7 +271,15 @@ classDiagram
 
     Display ..> GameState
     Display ..> Error
-    
+
+    %% Concrete Implementation Relationships
+    HumanAgent ..|> Agent
+    RandomAgent ..|> Agent
+    MinimaxAgent ..|> Agent
+
+    ConsoleDisplay ..|> Display
+    GUIDisplay ..|> Display
+
 ```
 
 ### Component Descriptions
