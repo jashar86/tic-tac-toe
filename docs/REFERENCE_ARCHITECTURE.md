@@ -211,7 +211,7 @@ classDiagram
     GameController --> GameState
     GameController ..> Position
     GameController ..> Marker
-    GameController ..>|produces| Error
+    GameController ..> Error : produces
 
     GameState --> Board
     GameState --> Player
