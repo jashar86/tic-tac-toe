@@ -136,84 +136,67 @@ classDiagram
         -Cell[3][3] grid
         -int size
         +Board()
-        +makeMove(row: int, col: int, player: Player): bool
-        +getCell(row: int, col: int): Player
+        +setMarker(row: int, col: int, marker: Marker): bool
+        +getMarker(row: int, col: int): Marker
         +isFull(): bool
-        +isEmpty(row: int, col: int): bool
         +clear(): void
-        +clone(): Board
-        +getCells(): Cell[3][3]
+    }
+    
+    class Player {
+        +String name
+        +int num_wins
+        +Marker current_marker
     }
 
     class GameState {
-        -Board board
-        -Player currentPlayer
-        -int xWins
-        -int oWins
-        -int draws
-        -GameStatus status
-        +GameState()
-        +getBoard(): Board
-        +getCurrentPlayer(): Player
-        +getXWins(): int
-        +getOWins(): int
-        +getDraws(): int
-        +getStatus(): GameStatus
-        +switchPlayer(): void
-        +recordWin(player: Player): void
-        +recordDraw(): void
-        +resetRound(): void
-        +resetAll(): void
+        +Board board
+        +Player player1
+        +Player player2
+        +int draws
+        +bool is_x_turn
+        +GameStatus status
     }
-
+   
     class Agent {
         <<interface>>
-        +getNextMove(board: Board, player: Player): Move
-    }
-
-    class UserInput {
-        <<interface>>
-        +getNextMove(board: Board, player: Player): Move
+        +getNextMove(board: Board, marker_type: Marker): Position
     }
 
     class Display {
         <<interface>>
-        +showBoard(gameState: GameState): void
-        +showWinner(player: Player): void
-        +showDraw(): void
-        +showScore(gameState: GameState): void
-        +showError(message: string): void
-        +showInvalidMove(): void
+        +render(state: GameState)
+        +showError(err: Error)
+    }
+
+    class Error {
+        +String message
     }
 
     class GameController {
-        -GameState gameState
-        -Agent xAgent
-        -Agent oAgent
-        -UserInput userInput
-        -Display display
-        +GameController(display: Display)
-        +setXPlayer(agent: Agent): void
-        +setOPlayer(agent: Agent): void
-        +setUserInput(input: UserInput): void
-        +playGame(): void
-        +playRound(): void
-        -processMove(move: Move): bool
-        -checkGameEnd(): bool
+        -GameState state
+        +getState(): GameState
+        +tryMove(position: Position, marker: Marker): optional<Error>        
     }
 
-    class Move {
-        +int row
-        +int col
-        +Move(row: int, col: int)
-        +isValid(): bool
+    class Position {
+        -index
+        +Position(index: int)
+        +Position(row: int, col: int)
+        +int getRow()
+        +int getCol()
+        +int getIndex()
     }
 
-    class Player {
+    class Marker {
         <<enumeration>>
         X
         O
         NONE
+    }
+
+    class Game {
+        +Game(controller: GameController, player1: Agent, player2: Agent, display: Display)
+        +run()
     }
 
     class GameStatus {
@@ -225,31 +208,17 @@ classDiagram
         DRAW
     }
 
-    class Cell {
-        -Player occupant
-        +Cell()
-        +isEmpty(): bool
-        +getOccupant(): Player
-        +setOccupant(player: Player): void
-        +clear(): void
-    }
-
     GameState --> Board
     GameState --> Player
     GameState --> GameStatus
-    Board --> Cell
-    Cell --> Player
     GameController --> GameState
-    GameController --> Agent
-    GameController --> UserInput
-    GameController --> Display
     Agent ..> Board
-    Agent ..> Player
-    Agent ..> Move
-    UserInput ..> Board
-    UserInput ..> Player
-    UserInput ..> Move
+    Agent ..> Position
     Display ..> GameState
+    Display ..> Error
+    Game --> GameController
+    Game --> Agent
+    Game --> Display
 ```
 
 ### Component Descriptions
