@@ -133,19 +133,15 @@ Invalid moves are detected and rejected immediately at the Board level, preventi
 ```mermaid
 classDiagram
     class Board {
-        -Cell[3][3] grid
-        -int size
+        -Marker[3][3] grid
         +Board()
-        +setMarker(row: int, col: int, marker: Marker): bool
-        +getMarker(row: int, col: int): Marker
-        +isFull(): bool
-        +clear(): void
+        +setMarker(position: Position, marker: Marker): bool
+        +getMarker(position: Position): Marker
     }
     
     class Player {
         +String name
         +int num_wins
-        +Marker current_marker
     }
 
     class GameState {
@@ -153,7 +149,7 @@ classDiagram
         +Player player1
         +Player player2
         +int draws
-        +bool is_x_turn
+        +bool player1_is_first
         +GameStatus status
     }
    
@@ -175,7 +171,7 @@ classDiagram
     class GameController {
         -GameState state
         +getState(): GameState
-        +tryMove(position: Position, marker: Marker): optional<Error>        
+        +tryMove(position: Position, marker: Marker): optional&ltError&gt        
     }
 
     class Position {
@@ -208,17 +204,27 @@ classDiagram
         DRAW
     }
 
-    GameState --> Board
-    GameState --> Player
-    GameState --> GameStatus
-    GameController --> GameState
-    Agent ..> Board
-    Agent ..> Position
-    Display ..> GameState
-    Display ..> Error
     Game --> GameController
     Game --> Agent
     Game --> Display
+
+    GameController --> GameState
+    GameController ..> Position
+    GameController ..> Marker
+
+    GameState --> Board
+    GameState --> Player
+    GameState --> GameStatus
+    
+    Board ..> Position
+    Board ..> Marker
+
+    Agent ..> Board
+    Agent ..> Position
+
+    Display ..> GameState
+    Display ..> Error
+    
 ```
 
 ### Component Descriptions
