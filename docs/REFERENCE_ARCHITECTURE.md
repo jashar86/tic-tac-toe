@@ -122,16 +122,9 @@ def checkGameStatus(board: Board) -> GameStatus:
 
 ```mermaid
 classDiagram
-class Session {
-        -Player player1
-        -Player player2
-        -ScoreBoard scores
-        -GameState current_game
 
-        +getPlayer1() : Player
-        +getPlayer2() : Player
-        +getNumDraws() : int
-        +startGame() : GameState
+    class TicTacToeApplication {
+
     }
 
     class Player {
@@ -151,9 +144,30 @@ class Session {
     }
 
 
-    Session *-- "1" GameState
-    Session *-- "2" Player
-    Session *-- ScoreBoard
+    class WelcomeStage {
+        <<interface>>
+        + start(stage_finished_callback(Player[2]))
+    }
+
+    class GameStage {
+        <<interface>>
+        + start(players: Player[2], scores: ScoreBoard)
+    }
+
+    class ResultStage {
+        <<interface>>
+        + start(scores: ScoreBoard)
+    }
+
+    TicTacToeApplication *-- WelcomeStage
+    TicTacToeApplication *-- GameStage
+    TicTacToeApplication *-- ResultStage
+
+    WelcomeStage ..> Player : Creates
+    GameStage ..> GameState
+    GameStage ..> ScoreBoard : Updates
+    ResultStage ..> ScoreBoard : Displays
 
     Player *-- Agent
+
 ```
