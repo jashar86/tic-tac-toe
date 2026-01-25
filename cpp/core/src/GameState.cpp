@@ -17,10 +17,19 @@ GameState::GameState(const Board& board, Marker turn, GameStatus status)
 {
 }
 
-const Board& GameState::board() const { return mBoard; }
+const Board& GameState::board() const
+{
+    return mBoard;
+}
 
-Marker GameState::currentTurn() const { return mTurn; }
+Marker GameState::currentTurn() const
+{
+    return mTurn;
+}
 
-GameStatus GameState::status() const { return mStatus; }
+GameStatus GameState::status() const
+{
+    return mStatus;
+}
 
 } // namespace game::core

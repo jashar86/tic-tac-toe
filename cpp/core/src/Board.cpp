@@ -11,7 +11,10 @@ Board::Board()
     // All mCells initialized to std::nullopt by default
 }
 
-std::optional<Marker> Board::getMarker(const Position& pos) const { return mCells[pos.index()]; }
+std::optional<Marker> Board::getMarker(const Position& pos) const
+{
+    return mCells[pos.index()];
+}
 
 bool Board::setMarker(const Position& pos, Marker marker)
 {
@@ -25,22 +28,31 @@ bool Board::setMarker(const Position& pos, Marker marker)
 
 bool Board::isEmpty() const
 {
-    return std::none_of(mCells.begin(), mCells.end(),
-                        [](const auto& cell) { return cell.has_value(); });
+    return std::none_of(mCells.begin(), mCells.end(), [](const auto& cell)
+    {
+        return cell.has_value();
+    });
 }
 
-bool Board::isCellEmpty(const Position& pos) const { return !mCells[pos.index()].has_value(); }
+bool Board::isCellEmpty(const Position& pos) const
+{
+    return !mCells[pos.index()].has_value();
+}
 
 bool Board::isFull() const
 {
-    return std::all_of(mCells.begin(), mCells.end(),
-                       [](const auto& cell) { return cell.has_value(); });
+    return std::all_of(mCells.begin(), mCells.end(), [](const auto& cell)
+    {
+        return cell.has_value();
+    });
 }
 
 int Board::count(Marker marker) const
 {
     return std::count_if(mCells.begin(), mCells.end(), [marker](const auto& cell)
-                         { return cell.has_value() && cell.value() == marker; });
+    {
+        return cell.has_value() && cell.value() == marker;
+    });
 }
 
 std::vector<Position> Board::availablePositions() const
