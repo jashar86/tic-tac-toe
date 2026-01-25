@@ -15,7 +15,10 @@ protected:
 };
 
 // Empty board tests
-TEST_F(BoardTest, NewBoardIsEmpty) { EXPECT_TRUE(board.isEmpty()); }
+TEST_F(BoardTest, NewBoardIsEmpty)
+{
+    EXPECT_TRUE(board.isEmpty());
+}
 
 TEST_F(BoardTest, NewBoardHasAllEmptyCells)
 {
@@ -25,7 +28,10 @@ TEST_F(BoardTest, NewBoardHasAllEmptyCells)
     }
 }
 
-TEST_F(BoardTest, NewBoardIsNotFull) { EXPECT_FALSE(board.isFull()); }
+TEST_F(BoardTest, NewBoardIsNotFull)
+{
+    EXPECT_FALSE(board.isFull());
+}
 
 // Setting markers
 TEST_F(BoardTest, SetMarkerOnEmptyCell)
@@ -51,7 +57,10 @@ TEST_F(BoardTest, BoardNotEmptyAfterSettingMarker)
 }
 
 // Cell emptiness check
-TEST_F(BoardTest, CellIsEmptyByDefault) { EXPECT_TRUE(board.isCellEmpty(Position(0))); }
+TEST_F(BoardTest, CellIsEmptyByDefault)
+{
+    EXPECT_TRUE(board.isCellEmpty(Position(0)));
+}
 
 TEST_F(BoardTest, CellNotEmptyAfterSettingMarker)
 {

@@ -17,9 +17,15 @@ protected:
 };
 
 // Initial state
-TEST_F(GameStateTest, InitialBoardIsEmpty) { EXPECT_TRUE(state.board().isEmpty()); }
+TEST_F(GameStateTest, InitialBoardIsEmpty)
+{
+    EXPECT_TRUE(state.board().isEmpty());
+}
 
-TEST_F(GameStateTest, InitialTurnIsX) { EXPECT_EQ(state.currentTurn(), Marker::X); }
+TEST_F(GameStateTest, InitialTurnIsX)
+{
+    EXPECT_EQ(state.currentTurn(), Marker::X);
+}
 
 TEST_F(GameStateTest, InitialStatusIsInProgress)
 {

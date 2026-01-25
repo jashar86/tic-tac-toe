@@ -107,9 +107,15 @@ TEST(PositionTest, ValidIndicesAreValid)
     }
 }
 
-TEST(PositionTest, NegativeIndexIsInvalid) { EXPECT_FALSE(Position::isValidIndex(-1)); }
+TEST(PositionTest, NegativeIndexIsInvalid)
+{
+    EXPECT_FALSE(Position::isValidIndex(-1));
+}
 
-TEST(PositionTest, Index9IsInvalid) { EXPECT_FALSE(Position::isValidIndex(9)); }
+TEST(PositionTest, Index9IsInvalid)
+{
+    EXPECT_FALSE(Position::isValidIndex(9));
+}
 
 TEST(PositionTest, ValidRowColAreValid)
 {
@@ -122,12 +128,24 @@ TEST(PositionTest, ValidRowColAreValid)
     }
 }
 
-TEST(PositionTest, NegativeRowIsInvalid) { EXPECT_FALSE(Position::isValidRowCol(-1, 0)); }
+TEST(PositionTest, NegativeRowIsInvalid)
+{
+    EXPECT_FALSE(Position::isValidRowCol(-1, 0));
+}
 
-TEST(PositionTest, NegativeColIsInvalid) { EXPECT_FALSE(Position::isValidRowCol(0, -1)); }
+TEST(PositionTest, NegativeColIsInvalid)
+{
+    EXPECT_FALSE(Position::isValidRowCol(0, -1));
+}
 
-TEST(PositionTest, Row3IsInvalid) { EXPECT_FALSE(Position::isValidRowCol(3, 0)); }
+TEST(PositionTest, Row3IsInvalid)
+{
+    EXPECT_FALSE(Position::isValidRowCol(3, 0));
+}
 
-TEST(PositionTest, Col3IsInvalid) { EXPECT_FALSE(Position::isValidRowCol(0, 3)); }
+TEST(PositionTest, Col3IsInvalid)
+{
+    EXPECT_FALSE(Position::isValidRowCol(0, 3));
+}
 
 } // namespace game::core

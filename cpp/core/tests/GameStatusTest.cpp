@@ -44,10 +44,19 @@ TEST(GameStatusTest, IsTerminalReturnsFalseForInProgress)
     EXPECT_FALSE(isTerminal(GameStatus::InProgress));
 }
 
-TEST(GameStatusTest, IsTerminalReturnsTrueForXWins) { EXPECT_TRUE(isTerminal(GameStatus::XWins)); }
+TEST(GameStatusTest, IsTerminalReturnsTrueForXWins)
+{
+    EXPECT_TRUE(isTerminal(GameStatus::XWins));
+}
 
-TEST(GameStatusTest, IsTerminalReturnsTrueForOWins) { EXPECT_TRUE(isTerminal(GameStatus::OWins)); }
+TEST(GameStatusTest, IsTerminalReturnsTrueForOWins)
+{
+    EXPECT_TRUE(isTerminal(GameStatus::OWins));
+}
 
-TEST(GameStatusTest, IsTerminalReturnsTrueForDraw) { EXPECT_TRUE(isTerminal(GameStatus::Draw)); }
+TEST(GameStatusTest, IsTerminalReturnsTrueForDraw)
+{
+    EXPECT_TRUE(isTerminal(GameStatus::Draw));
+}
 
 } // namespace game::core

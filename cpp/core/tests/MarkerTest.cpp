@@ -17,10 +17,19 @@ TEST(MarkerTest, HasOValue)
     EXPECT_EQ(o, Marker::O);
 }
 
-TEST(MarkerTest, XAndOAreDifferent) { EXPECT_NE(Marker::X, Marker::O); }
+TEST(MarkerTest, XAndOAreDifferent)
+{
+    EXPECT_NE(Marker::X, Marker::O);
+}
 
-TEST(MarkerTest, OpponentOfXIsO) { EXPECT_EQ(opponent(Marker::X), Marker::O); }
+TEST(MarkerTest, OpponentOfXIsO)
+{
+    EXPECT_EQ(opponent(Marker::X), Marker::O);
+}
 
-TEST(MarkerTest, OpponentOfOIsX) { EXPECT_EQ(opponent(Marker::O), Marker::X); }
+TEST(MarkerTest, OpponentOfOIsX)
+{
+    EXPECT_EQ(opponent(Marker::O), Marker::X);
+}
 
 } // namespace game::core
