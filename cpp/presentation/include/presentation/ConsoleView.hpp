@@ -1,8 +1,8 @@
-#ifndef TICTACTOE_PRESENTATION_CONSOLEVIEW_H
-#define TICTACTOE_PRESENTATION_CONSOLEVIEW_H
+#ifndef TICTACTOE_PRESENTATION_CONSOLEVIEW_HPP
+#define TICTACTOE_PRESENTATION_CONSOLEVIEW_HPP
 
 /**
- * @file ConsoleView.h
+ * @file ConsoleView.hpp
  * @brief Console/Terminal UI implementation
  *
  * The ConsoleView class implements the presentation layer interfaces
@@ -16,7 +16,7 @@
  * - GameFinishedListener - Display game results
  */
 
-#include "application/Session.h"
+#include "application/Session.hpp"
 
 namespace tictactoe::presentation {
 
@@ -45,4 +45,4 @@ public:
 
 } // namespace tictactoe::presentation
 
-#endif // TICTACTOE_PRESENTATION_CONSOLEVIEW_H
+#endif // TICTACTOE_PRESENTATION_CONSOLEVIEW_HPP

@@ -1,4 +1,4 @@
-#include "presentation/ConsoleView.h"
+#include "presentation/ConsoleView.hpp"
 #include <iostream>
 
 namespace tictactoe::presentation {

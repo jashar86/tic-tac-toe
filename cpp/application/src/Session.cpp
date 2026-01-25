@@ -1,4 +1,4 @@
-#include "application/Session.h"
+#include "application/Session.hpp"
 
 namespace tictactoe::application {
 

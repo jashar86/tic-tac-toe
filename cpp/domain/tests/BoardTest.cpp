@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "domain/Board.h"
+#include "domain/Board.hpp"
 
 namespace tictactoe::domain {
 
