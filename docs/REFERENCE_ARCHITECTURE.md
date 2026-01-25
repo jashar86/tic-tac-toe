@@ -120,12 +120,95 @@ def checkGameStatus(board: Board) -> GameStatus:
 
 ## Application Layer Design
 
+### Stage Transition Diagram
+
+The tic-tac-toe application consists of switching between five stages:
+* **Welcome** - Sets up the players for the game (name, agent logic, etc.). Allows quitting or starting a game.
+* **Game Start** - Entered whenever a new game starts. Transitions to the first player's turn.
+* **Player 1 Turn** - Entered whenever it is the first player's turn to make a move. Allows the user to quit or choose a board position.
+* **Player 2 Turn** - Entered whenever it is the second player's turn to make a move. Allows the user to quit or choose a board position.
+* **Game Finished** - Entered whenever a game has finished. Allows the user to quit, play again, or restart.  
+
+
+```mermaid
+stateDiagram-v2
+
+    welcome: Welcome
+    start: Game Start
+    turn1: Player 1 Turn
+    turn2: Player 2 Turn
+    end: Game Finished
+
+    [*] --> welcome
+    welcome --> start : start
+    welcome --> [*] : quit
+    start --> turn1 
+    turn1 --> turn2 : no winner
+    turn1 --> end : player 1 wins or draw
+    turn2 --> turn1 : no winner
+    turn2 --> end : player 2 wins or draw
+    end --> [*] : quit
+    end --> start : play again
+    end --> welcome : restart
+```
+
+### Application Class Diagram
+
 ```mermaid
 classDiagram
 
-    class TicTacToeApplication {
+    class StageCoordinator {
 
     }
+
+    class WelcomeStage {
+        <<interface>>
+        + enter(callback: WelcomeStageFinishedCallback)
+    }
+
+    class WelcomeStageFinishedCallback {
+        <<interface>>
+        + onQuit()
+        + onGameStart(players: Player[2])
+    }
+
+    class GameStartingStage {
+        <<interface>>
+        + enter(callback: GameReadyCallback)
+    }
+
+    class GameReadyCallback {
+        <<interface>>
+        + onGameReady()
+    }
+
+    class PlayerTurnStage {
+        <<interface>>
+        + enter(state: GameState, callback: )
+    }
+
+    class PlayerTurnFinishedCallback {
+        <<interface>>
+        + onQuit()
+        + onMoveSelected(move: Position)
+    }
+
+    StageCoordinator *-- WelcomeStage
+    StageCoordinator --> WelcomeStageFinishedCallback : creates
+    WelcomeStageFinishedCallback <-- WelcomeStage : calls 
+
+    StageCoordinator *-- PlayerTurnStage
+    StageCoordinator --> PlayerTurnFinishedCallback : creates
+    PlayerTurnFinishedCallback <-- PlayerTurnStage : calls
+
+
+```
+---
+
+---
+
+```mermaid
+classDiagram
 
     class Player {
         +String name
@@ -143,25 +226,27 @@ classDiagram
         + getNextMove(board: Board) : Position
     }
 
+    
 
-    class WelcomeStage {
+    class GameStartStage {
         <<interface>>
-        + start(stage_finished_callback(Player[2]))
+        + enter(players: Player[2], scores: ScoreBoard)
     }
 
-    class GameStage {
+    class PlayerTurnStage {
         <<interface>>
-        + start(players: Player[2], scores: ScoreBoard)
+        + enter(player: Player)
     }
 
     class ResultStage {
         <<interface>>
-        + start(scores: ScoreBoard)
+        + enter(scores: ScoreBoard)
     }
 
-    TicTacToeApplication *-- WelcomeStage
-    TicTacToeApplication *-- GameStage
-    TicTacToeApplication *-- ResultStage
+    
+
+    StageCoordinator *-- GameStage
+    StageCoordinator *-- ResultStage
 
     WelcomeStage ..> Player : Creates
     GameStage ..> GameState
