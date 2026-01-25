@@ -9,6 +9,7 @@ flowchart TB
         direction TB
         rules[Game Rules<br/><small>Move validation - Win check]
         model[Data Model<br/><small>Game State - Board - Marker]
+        agent[Agents<br/><small>Random - MinMax - Learned]
     end
     subgraph app[Application Layer]
         direction TB
@@ -36,6 +37,7 @@ classDiagram
 
     class GameState {
         +Board board
+        +Marker turn
         +GameStatus status
     }
 
@@ -63,9 +65,8 @@ classDiagram
 
     class GameStatus {
         <<enumeration>>
-        X_TURN
+        IN_PROGRESS
         X_WINS
-        O_TURN
         O_WINS
         DRAW
     }
@@ -77,6 +78,25 @@ classDiagram
 
     Board ..> Position : uses
     Board ..> Marker : uses
+```
+
+### Agent Classes
+
+```mermaid
+classDiagram
+
+    class Agent {
+        <<interface>>
+        + calculateNextMove(board: Board, marker: Marker) Position
+    }
+
+    class RandomAgent 
+    class MinmaxAgent
+    class LearnedAgent
+
+    Agent <|-- RandomAgent
+    Agent <|-- MinmaxAgent
+    Agent <|-- LearnedAgent
 ```
 
 ### Game Logic
@@ -161,9 +181,22 @@ classDiagram
         + run()
     }
 
-    class PlayerGenerator {
+    class Session {
+        +Player player1
+        +Player player2
+        +Scoreboard scoreboard
+        +GameState game
+    }
+
+    class Scoreboard {
+        +int num_player1_wins
+        +int num_player2_wins
+        +int num_draws
+    }
+
+    class SessionGenerator {
         <<interface>>
-        +generatePlayers() Result~Player[2],Quit~
+        +startNewSession() Result~Session,Quit~
     }
 
     class Player {
@@ -182,10 +215,13 @@ classDiagram
         + onGameEnded(scoreboard: Scoreboard)
     }
 
-    TicTacToeApp *-- PlayerGenerator
-    TicTacToeApp *-- "2" Player
+    TicTacToeApp *-- SessionGenerator
     TicTacToeApp *-- GameStartListener
     TicTacToeApp *-- GameFinishedListener
 
-    PlayerGenerator --> Player : generates
+    SessionGenerator --> Session : generates
+    Session *-- "2" Player
+    Session *-- Scoreboard
+    Session *-- GameState
 ```
+
