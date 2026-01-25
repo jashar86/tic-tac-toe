@@ -11,7 +11,7 @@ target_include_directories(presentation
         $<INSTALL_INTERFACE:include>
 )
 
-# Presentation layer depends on Application layer (which depends on Domain)
+# Presentation layer depends on Application layer (which depends on Core)
 target_link_libraries(presentation
     PUBLIC application
 )

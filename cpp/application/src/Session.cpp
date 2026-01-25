@@ -1,12 +1,15 @@
 #include "application/Session.hpp"
 
-namespace game::app {
+namespace game::app
+{
 
-Session::Session() {
+Session::Session()
+{
     // TODO: Initialize session with default values
 }
 
-bool Session::isActive() const {
+bool Session::isActive() const
+{
     // Skeleton implementation
     return false;
 }

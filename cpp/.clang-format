@@ -1,0 +1,39 @@
+---
+Language: Cpp
+BasedOnStyle: LLVM
+
+# Use spaces instead of tabs
+UseTab: Never
+IndentWidth: 4
+TabWidth: 4
+
+# Opening brackets on a new line (Allman style)
+BreakBeforeBraces: Allman
+
+# Variable name alignment for adjacent lines
+AlignConsecutiveDeclarations: true
+AlignConsecutiveAssignments: true
+
+# Other common settings
+ColumnLimit: 100
+PointerAlignment: Left
+SpaceAfterCStyleCast: false
+SpaceBeforeParens: ControlStatements
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+
+# Include sorting
+SortIncludes: true
+IncludeBlocks: Regroup
+
+# Namespace handling
+NamespaceIndentation: None
+FixNamespaceComments: true
+
+# Constructor initializer lists
+BreakConstructorInitializers: BeforeComma
+ConstructorInitializerIndentWidth: 4
+
+# Access modifiers
+AccessModifierOffset: -4
+...
