@@ -4,7 +4,8 @@
 /// \file Position.hpp
 /// \brief Board position representation
 
-namespace game::core {
+namespace game::core
+{
 
 /// \brief Represents a position on the 3x3 board
 ///
@@ -15,7 +16,8 @@ namespace game::core {
 ///   3 | 4 | 5
 ///   ---------
 ///   6 | 7 | 8
-class Position {
+class Position
+{
 public:
     /// \brief Construct position from linear index
     /// \param index Linear index (0-8)
@@ -56,7 +58,7 @@ public:
     bool operator!=(const Position& other) const;
 
 private:
-    int index_;
+    int mIndex;
 };
 
 } // namespace game::core

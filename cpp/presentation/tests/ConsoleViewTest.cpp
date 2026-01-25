@@ -1,25 +1,32 @@
-#include <gtest/gtest.h>
 #include "presentation/ConsoleView.hpp"
 
-namespace game::view {
+#include <gtest/gtest.h>
 
-class ConsoleViewTest : public ::testing::Test {
+namespace game::view
+{
+
+class ConsoleViewTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
+    void SetUp() override
+    {
         // Setup code before each test
     }
 
-    void TearDown() override {
+    void TearDown() override
+    {
         // Cleanup code after each test
     }
 };
 
-TEST_F(ConsoleViewTest, ViewIsInitializedByDefault) {
+TEST_F(ConsoleViewTest, ViewIsInitializedByDefault)
+{
     ConsoleView view;
     EXPECT_TRUE(view.isInitialized());
 }
 
-TEST_F(ConsoleViewTest, SkeletonTestPasses) {
+TEST_F(ConsoleViewTest, SkeletonTestPasses)
+{
     // Placeholder test to verify test infrastructure works
     EXPECT_EQ(3 + 3, 6);
 }

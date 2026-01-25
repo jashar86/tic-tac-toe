@@ -1,17 +1,19 @@
 #include "presentation/ConsoleView.hpp"
+
 #include <iostream>
 
-namespace game::view {
+namespace game::view
+{
 
-ConsoleView::ConsoleView() {
+ConsoleView::ConsoleView()
+{
     // TODO: Initialize console view
 }
 
-void ConsoleView::showWelcome() const {
-    std::cout << "Welcome to Tic-Tac-Toe!" << std::endl;
-}
+void ConsoleView::showWelcome() const { std::cout << "Welcome to Tic-Tac-Toe!" << std::endl; }
 
-bool ConsoleView::isInitialized() const {
+bool ConsoleView::isInitialized() const
+{
     // Skeleton implementation
     return true;
 }

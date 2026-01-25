@@ -1,27 +1,26 @@
 #include "core/GameState.hpp"
 
-namespace game::core {
+namespace game::core
+{
 
 GameState::GameState()
-    : board_()
-    , turn_(Marker::X)
-    , status_(GameStatus::InProgress) {}
+    : mBoard()
+    , mTurn(Marker::X)
+    , mStatus(GameStatus::InProgress)
+{
+}
 
 GameState::GameState(const Board& board, Marker turn, GameStatus status)
-    : board_(board)
-    , turn_(turn)
-    , status_(status) {}
-
-const Board& GameState::board() const {
-    return board_;
+    : mBoard(board)
+    , mTurn(turn)
+    , mStatus(status)
+{
 }
 
-Marker GameState::currentTurn() const {
-    return turn_;
-}
+const Board& GameState::board() const { return mBoard; }
 
-GameStatus GameState::status() const {
-    return status_;
-}
+Marker GameState::currentTurn() const { return mTurn; }
+
+GameStatus GameState::status() const { return mStatus; }
 
 } // namespace game::core

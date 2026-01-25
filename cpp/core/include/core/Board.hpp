@@ -4,20 +4,23 @@
 /// \file Board.hpp
 /// \brief Tic-Tac-Toe board representation
 
-#include <array>
-#include <optional>
-#include <vector>
 #include "core/Marker.hpp"
 #include "core/Position.hpp"
 
-namespace game::core {
+#include <array>
+#include <optional>
+#include <vector>
+
+namespace game::core
+{
 
 /// \brief Represents a 3x3 Tic-Tac-Toe board
 ///
 /// The board is the core data structure for the game state.
 /// It provides methods to query and modify cell contents.
 /// Empty cells are represented as std::nullopt.
-class Board {
+class Board
+{
 public:
     /// \brief Construct an empty board
     Board();
@@ -58,7 +61,7 @@ public:
     std::vector<Position> availablePositions() const;
 
 private:
-    std::array<std::optional<Marker>, 9> cells_;
+    std::array<std::optional<Marker>, 9> mCells;
 };
 
 } // namespace game::core

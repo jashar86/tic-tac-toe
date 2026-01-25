@@ -5,15 +5,17 @@
 /// \brief Complete game state representation
 
 #include "core/Board.hpp"
-#include "core/Marker.hpp"
 #include "core/GameStatus.hpp"
+#include "core/Marker.hpp"
 
-namespace game::core {
+namespace game::core
+{
 
 /// \brief Represents the complete state of a tic-tac-toe game
 ///
 /// Contains the board, whose turn it is, and the current game status.
-class GameState {
+class GameState
+{
 public:
     /// \brief Construct initial game state
     ///
@@ -41,9 +43,9 @@ public:
     GameStatus status() const;
 
 private:
-    Board board_;
-    Marker turn_;
-    GameStatus status_;
+    Board      mBoard;
+    Marker     mTurn;
+    GameStatus mStatus;
 };
 
 } // namespace game::core

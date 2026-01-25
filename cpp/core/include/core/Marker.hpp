@@ -4,12 +4,14 @@
 /// \file Marker.hpp
 /// \brief Marker enumeration for tic-tac-toe cells
 
-namespace game::core {
+namespace game::core
+{
 
 /// \brief Represents a player's marker on the board
-enum class Marker {
-    X,  ///< X marker
-    O   ///< O marker
+enum class Marker
+{
+    X, ///< X marker
+    O  ///< O marker
 };
 
 /// \brief Get the opponent's marker

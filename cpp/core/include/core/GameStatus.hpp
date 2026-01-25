@@ -4,14 +4,16 @@
 /// \file GameStatus.hpp
 /// \brief Game status enumeration
 
-namespace game::core {
+namespace game::core
+{
 
 /// \brief Represents the current state of the game
-enum class GameStatus {
-    InProgress,  ///< Game is still ongoing
-    XWins,       ///< X has won the game
-    OWins,       ///< O has won the game
-    Draw         ///< Game ended in a draw
+enum class GameStatus
+{
+    InProgress, ///< Game is still ongoing
+    XWins,      ///< X has won the game
+    OWins,      ///< O has won the game
+    Draw        ///< Game ended in a draw
 };
 
 /// \brief Check if the game has ended

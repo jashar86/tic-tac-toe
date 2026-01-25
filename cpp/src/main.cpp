@@ -7,7 +7,8 @@
 
 #include <iostream>
 
-int main() {
+int main()
+{
     std::cout << "Tic-Tac-Toe - Skeleton Project" << std::endl;
     std::cout << "Build successful!" << std::endl;
     return 0;

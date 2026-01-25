@@ -10,13 +10,15 @@
 
 #include "application/Session.hpp"
 
-namespace game::view {
+namespace game::view
+{
 
 /// \brief Console-based UI for Tic-Tac-Toe
 ///
 /// Implements all presentation layer interfaces for a terminal UI.
 /// Renders the board as ASCII art and accepts keyboard input.
-class ConsoleView {
+class ConsoleView
+{
 public:
     ConsoleView();
     ~ConsoleView() = default;

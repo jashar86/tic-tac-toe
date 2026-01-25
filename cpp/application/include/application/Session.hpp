@@ -10,13 +10,15 @@
 
 #include "core/Board.hpp"
 
-namespace game::app {
+namespace game::app
+{
 
 /// \brief Manages a game session with two players
 ///
 /// A session tracks the players, their scores across multiple games,
 /// and the current game being played.
-class Session {
+class Session
+{
 public:
     Session();
     ~Session() = default;
