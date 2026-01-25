@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include "domain/Board.hpp"
-#include "domain/Position.hpp"
-#include "domain/Marker.hpp"
+#include "core/Board.hpp"
+#include "core/Position.hpp"
+#include "core/Marker.hpp"
 
 namespace game::core {
 
@@ -17,7 +17,7 @@ TEST_F(BoardTest, NewBoardIsEmpty) {
 
 TEST_F(BoardTest, NewBoardHasAllEmptyCells) {
     for (int i = 0; i < 9; ++i) {
-        EXPECT_EQ(board.getMarker(Position(i)), Marker::Empty);
+        EXPECT_FALSE(board.getMarker(Position(i)).has_value());
     }
 }
 
@@ -29,14 +29,15 @@ TEST_F(BoardTest, NewBoardIsNotFull) {
 TEST_F(BoardTest, SetMarkerOnEmptyCell) {
     Position pos(0);
     EXPECT_TRUE(board.setMarker(pos, Marker::X));
-    EXPECT_EQ(board.getMarker(pos), Marker::X);
+    EXPECT_TRUE(board.getMarker(pos).has_value());
+    EXPECT_EQ(board.getMarker(pos).value(), Marker::X);
 }
 
 TEST_F(BoardTest, SetMarkerOnOccupiedCellFails) {
     Position pos(0);
     board.setMarker(pos, Marker::X);
     EXPECT_FALSE(board.setMarker(pos, Marker::O));
-    EXPECT_EQ(board.getMarker(pos), Marker::X);
+    EXPECT_EQ(board.getMarker(pos).value(), Marker::X);
 }
 
 TEST_F(BoardTest, BoardNotEmptyAfterSettingMarker) {
@@ -89,7 +90,6 @@ TEST_F(BoardTest, BoardNotFullWithOneMissing) {
 TEST_F(BoardTest, CountZeroOnEmptyBoard) {
     EXPECT_EQ(board.count(Marker::X), 0);
     EXPECT_EQ(board.count(Marker::O), 0);
-    EXPECT_EQ(board.count(Marker::Empty), 9);
 }
 
 TEST_F(BoardTest, CountAfterPlacingMarkers) {
@@ -99,7 +99,6 @@ TEST_F(BoardTest, CountAfterPlacingMarkers) {
 
     EXPECT_EQ(board.count(Marker::X), 2);
     EXPECT_EQ(board.count(Marker::O), 1);
-    EXPECT_EQ(board.count(Marker::Empty), 6);
 }
 
 // Available positions
@@ -128,8 +127,9 @@ TEST_F(BoardTest, NoAvailablePositionsOnFullBoard) {
 // Row/col access
 TEST_F(BoardTest, SetAndGetByRowCol) {
     board.setMarker(Position(1, 2), Marker::O);
-    EXPECT_EQ(board.getMarker(Position(1, 2)), Marker::O);
-    EXPECT_EQ(board.getMarker(Position(5)), Marker::O);  // index 5 = row 1, col 2
+    EXPECT_TRUE(board.getMarker(Position(1, 2)).has_value());
+    EXPECT_EQ(board.getMarker(Position(1, 2)).value(), Marker::O);
+    EXPECT_EQ(board.getMarker(Position(5)).value(), Marker::O);  // index 5 = row 1, col 2
 }
 
 } // namespace game::core

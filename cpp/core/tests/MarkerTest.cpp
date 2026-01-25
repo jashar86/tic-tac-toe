@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "domain/Marker.hpp"
+#include "core/Marker.hpp"
 
 namespace game::core {
 
@@ -13,18 +13,8 @@ TEST(MarkerTest, HasOValue) {
     EXPECT_EQ(o, Marker::O);
 }
 
-TEST(MarkerTest, HasEmptyValue) {
-    Marker empty = Marker::Empty;
-    EXPECT_EQ(empty, Marker::Empty);
-}
-
 TEST(MarkerTest, XAndOAreDifferent) {
     EXPECT_NE(Marker::X, Marker::O);
-}
-
-TEST(MarkerTest, EmptyIsDifferentFromXAndO) {
-    EXPECT_NE(Marker::Empty, Marker::X);
-    EXPECT_NE(Marker::Empty, Marker::O);
 }
 
 TEST(MarkerTest, OpponentOfXIsO) {

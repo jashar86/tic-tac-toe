@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
-#include "domain/GameState.hpp"
-#include "domain/Board.hpp"
-#include "domain/Position.hpp"
-#include "domain/Marker.hpp"
-#include "domain/GameStatus.hpp"
+#include "core/GameState.hpp"
+#include "core/Board.hpp"
+#include "core/Position.hpp"
+#include "core/Marker.hpp"
+#include "core/GameStatus.hpp"
 
 namespace game::core {
 
@@ -39,7 +39,8 @@ TEST_F(GameStateTest, ConstructWithBoard) {
     GameState customState(board, Marker::O, GameStatus::InProgress);
 
     EXPECT_FALSE(customState.board().isEmpty());
-    EXPECT_EQ(customState.board().getMarker(Position(0)), Marker::X);
+    EXPECT_TRUE(customState.board().getMarker(Position(0)).has_value());
+    EXPECT_EQ(customState.board().getMarker(Position(0)).value(), Marker::X);
     EXPECT_EQ(customState.currentTurn(), Marker::O);
     EXPECT_EQ(customState.status(), GameStatus::InProgress);
 }

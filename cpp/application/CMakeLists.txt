@@ -11,9 +11,9 @@ target_include_directories(application
         $<INSTALL_INTERFACE:include>
 )
 
-# Application layer depends on Domain layer
+# Application layer depends on Core layer
 target_link_libraries(application
-    PUBLIC domain
+    PUBLIC core
 )
 
 # ============================================================================

@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "domain/GameStatus.hpp"
+#include "core/GameStatus.hpp"
 
 namespace game::core {
 

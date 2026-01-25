@@ -36,9 +36,9 @@ enable_testing()
 include(GoogleTest)
 
 # ============================================================================
-# Architecture Layers (dependencies flow inward: presentation -> application -> domain)
+# Architecture Layers (dependencies flow inward: presentation -> application -> core)
 # ============================================================================
-add_subdirectory(domain)
+add_subdirectory(core)
 add_subdirectory(application)
 add_subdirectory(presentation)
 
@@ -46,4 +46,4 @@ add_subdirectory(presentation)
 # Main Executable
 # ============================================================================
 add_executable(tictactoe src/main.cpp)
-target_link_libraries(tictactoe PRIVATE presentation application domain)
+target_link_libraries(tictactoe PRIVATE presentation application core)

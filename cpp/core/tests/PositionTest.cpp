@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "domain/Position.hpp"
+#include "core/Position.hpp"
 
 namespace game::core {
 

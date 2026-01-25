@@ -1,7 +1,7 @@
-# Domain Layer - Pure game logic with zero external dependencies
+# Core Layer - Pure game logic with zero external dependencies
 # Contains: Board, GameState, Position, Marker, GameStatus, Agents
 
-add_library(domain
+add_library(core
     src/Marker.cpp
     src/GameStatus.cpp
     src/Position.cpp
@@ -9,16 +9,16 @@ add_library(domain
     src/GameState.cpp
 )
 
-target_include_directories(domain
+target_include_directories(core
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
 )
 
 # ============================================================================
-# Domain Tests
+# Core Tests
 # ============================================================================
-add_executable(domain_tests
+add_executable(core_tests
     tests/MarkerTest.cpp
     tests/GameStatusTest.cpp
     tests/PositionTest.cpp
@@ -26,10 +26,10 @@ add_executable(domain_tests
     tests/GameStateTest.cpp
 )
 
-target_link_libraries(domain_tests
+target_link_libraries(core_tests
     PRIVATE
-        domain
+        core
         GTest::gtest_main
 )
 
-gtest_discover_tests(domain_tests)
+gtest_discover_tests(core_tests)

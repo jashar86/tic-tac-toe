@@ -1,4 +1,4 @@
-#include "domain/GameState.hpp"
+#include "core/GameState.hpp"
 
 namespace game::core {
 
