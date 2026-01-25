@@ -1,6 +1,6 @@
 #include "application/Session.hpp"
 
-namespace tictactoe::application {
+namespace game::app {
 
 Session::Session() {
     // TODO: Initialize session with default values
@@ -11,4 +11,4 @@ bool Session::isActive() const {
     return false;
 }
 
-} // namespace tictactoe::application
+} // namespace game::app

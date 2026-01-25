@@ -1,5 +1,5 @@
-#ifndef TICTACTOE_DOMAIN_BOARD_HPP
-#define TICTACTOE_DOMAIN_BOARD_HPP
+#ifndef GAME_CORE_BOARD_HPP
+#define GAME_CORE_BOARD_HPP
 
 /**
  * @file Board.hpp
@@ -14,7 +14,7 @@
  * - Board state validation
  */
 
-namespace tictactoe::domain {
+namespace game::core {
 
 /**
  * @brief Represents a 3x3 Tic-Tac-Toe board
@@ -34,6 +34,6 @@ public:
     bool isEmpty() const;
 };
 
-} // namespace tictactoe::domain
+} // namespace game::core
 
-#endif // TICTACTOE_DOMAIN_BOARD_HPP
+#endif // GAME_CORE_BOARD_HPP

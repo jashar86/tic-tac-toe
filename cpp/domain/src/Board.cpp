@@ -1,6 +1,6 @@
 #include "domain/Board.hpp"
 
-namespace tictactoe::domain {
+namespace game::core {
 
 Board::Board() {
     // TODO: Initialize empty 3x3 board
@@ -11,4 +11,4 @@ bool Board::isEmpty() const {
     return true;
 }
 
-} // namespace tictactoe::domain
+} // namespace game::core

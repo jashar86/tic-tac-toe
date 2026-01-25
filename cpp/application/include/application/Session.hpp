@@ -1,5 +1,5 @@
-#ifndef TICTACTOE_APPLICATION_SESSION_HPP
-#define TICTACTOE_APPLICATION_SESSION_HPP
+#ifndef GAME_APP_SESSION_HPP
+#define GAME_APP_SESSION_HPP
 
 /**
  * @file Session.hpp
@@ -17,7 +17,7 @@
 
 #include "domain/Board.hpp"
 
-namespace tictactoe::application {
+namespace game::app {
 
 /**
  * @brief Manages a game session with two players
@@ -37,6 +37,6 @@ public:
     bool isActive() const;
 };
 
-} // namespace tictactoe::application
+} // namespace game::app
 
-#endif // TICTACTOE_APPLICATION_SESSION_HPP
+#endif // GAME_APP_SESSION_HPP
