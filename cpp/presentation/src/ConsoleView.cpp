@@ -1,7 +1,7 @@
 #include "presentation/ConsoleView.hpp"
 #include <iostream>
 
-namespace tictactoe::presentation {
+namespace game::view {
 
 ConsoleView::ConsoleView() {
     // TODO: Initialize console view
@@ -16,4 +16,4 @@ bool ConsoleView::isInitialized() const {
     return true;
 }
 
-} // namespace tictactoe::presentation
+} // namespace game::view

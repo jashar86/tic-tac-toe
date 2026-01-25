@@ -1,5 +1,5 @@
-#ifndef TICTACTOE_PRESENTATION_CONSOLEVIEW_HPP
-#define TICTACTOE_PRESENTATION_CONSOLEVIEW_HPP
+#ifndef GAME_VIEW_CONSOLEVIEW_HPP
+#define GAME_VIEW_CONSOLEVIEW_HPP
 
 /**
  * @file ConsoleView.hpp
@@ -18,7 +18,7 @@
 
 #include "application/Session.hpp"
 
-namespace tictactoe::presentation {
+namespace game::view {
 
 /**
  * @brief Console-based UI for Tic-Tac-Toe
@@ -43,6 +43,6 @@ public:
     bool isInitialized() const;
 };
 
-} // namespace tictactoe::presentation
+} // namespace game::view
 
-#endif // TICTACTOE_PRESENTATION_CONSOLEVIEW_HPP
+#endif // GAME_VIEW_CONSOLEVIEW_HPP

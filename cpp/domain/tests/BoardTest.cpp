@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "domain/Board.hpp"
 
-namespace tictactoe::domain {
+namespace game::core {
 
 class BoardTest : public ::testing::Test {
 protected:
@@ -24,4 +24,4 @@ TEST_F(BoardTest, SkeletonTestPasses) {
     EXPECT_EQ(1 + 1, 2);
 }
 
-} // namespace tictactoe::domain
+} // namespace game::core

@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "application/Session.hpp"
 
-namespace tictactoe::application {
+namespace game::app {
 
 class SessionTest : public ::testing::Test {
 protected:
@@ -24,4 +24,4 @@ TEST_F(SessionTest, SkeletonTestPasses) {
     EXPECT_EQ(2 + 2, 4);
 }
 
-} // namespace tictactoe::application
+} // namespace game::app

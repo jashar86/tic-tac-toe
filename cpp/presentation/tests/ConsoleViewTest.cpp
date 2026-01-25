@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "presentation/ConsoleView.hpp"
 
-namespace tictactoe::presentation {
+namespace game::view {
 
 class ConsoleViewTest : public ::testing::Test {
 protected:
@@ -24,4 +24,4 @@ TEST_F(ConsoleViewTest, SkeletonTestPasses) {
     EXPECT_EQ(3 + 3, 6);
 }
 
-} // namespace tictactoe::presentation
+} // namespace game::view
