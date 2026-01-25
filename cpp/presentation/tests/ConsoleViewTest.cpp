@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "presentation/ConsoleView.h"
+#include "presentation/ConsoleView.hpp"
 
 namespace tictactoe::presentation {
 

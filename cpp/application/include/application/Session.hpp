@@ -1,8 +1,8 @@
-#ifndef TICTACTOE_APPLICATION_SESSION_H
-#define TICTACTOE_APPLICATION_SESSION_H
+#ifndef TICTACTOE_APPLICATION_SESSION_HPP
+#define TICTACTOE_APPLICATION_SESSION_HPP
 
 /**
- * @file Session.h
+ * @file Session.hpp
  * @brief Game session management
  *
  * The Session class manages a game session including players,
@@ -15,7 +15,7 @@
  * - Current game state reference
  */
 
-#include "domain/Board.h"
+#include "domain/Board.hpp"
 
 namespace tictactoe::application {
 
@@ -39,4 +39,4 @@ public:
 
 } // namespace tictactoe::application
 
-#endif // TICTACTOE_APPLICATION_SESSION_H
+#endif // TICTACTOE_APPLICATION_SESSION_HPP

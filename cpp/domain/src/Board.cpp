@@ -1,4 +1,4 @@
-#include "domain/Board.h"
+#include "domain/Board.hpp"
 
 namespace tictactoe::domain {
 

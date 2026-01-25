@@ -1,8 +1,8 @@
-#ifndef TICTACTOE_DOMAIN_BOARD_H
-#define TICTACTOE_DOMAIN_BOARD_H
+#ifndef TICTACTOE_DOMAIN_BOARD_HPP
+#define TICTACTOE_DOMAIN_BOARD_HPP
 
 /**
- * @file Board.h
+ * @file Board.hpp
  * @brief Tic-Tac-Toe board representation
  *
  * The Board class represents the 3x3 game board. This is part of the
@@ -36,4 +36,4 @@ public:
 
 } // namespace tictactoe::domain
 
-#endif // TICTACTOE_DOMAIN_BOARD_H
+#endif // TICTACTOE_DOMAIN_BOARD_HPP
