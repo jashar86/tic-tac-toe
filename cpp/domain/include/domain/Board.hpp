@@ -4,15 +4,12 @@
 /**
  * @file Board.hpp
  * @brief Tic-Tac-Toe board representation
- *
- * The Board class represents the 3x3 game board. This is part of the
- * Domain layer and has no external dependencies.
- *
- * TODO: Implement full board logic including:
- * - Cell access (get/set markers)
- * - Available positions query
- * - Board state validation
  */
+
+#include <array>
+#include <vector>
+#include "domain/Marker.hpp"
+#include "domain/Position.hpp"
 
 namespace game::core {
 
@@ -24,14 +21,62 @@ namespace game::core {
  */
 class Board {
 public:
+    /**
+     * @brief Construct an empty board
+     */
     Board();
+
     ~Board() = default;
+
+    /**
+     * @brief Get the marker at a position
+     * @param pos The position to query
+     * @return The marker at that position
+     */
+    Marker getMarker(const Position& pos) const;
+
+    /**
+     * @brief Set a marker at a position
+     * @param pos The position to set
+     * @param marker The marker to place
+     * @return true if successful, false if cell was occupied
+     */
+    bool setMarker(const Position& pos, Marker marker);
 
     /**
      * @brief Check if the board is empty
      * @return true if all cells are empty
      */
     bool isEmpty() const;
+
+    /**
+     * @brief Check if a specific cell is empty
+     * @param pos The position to check
+     * @return true if the cell is empty
+     */
+    bool isCellEmpty(const Position& pos) const;
+
+    /**
+     * @brief Check if the board is full
+     * @return true if all cells are occupied
+     */
+    bool isFull() const;
+
+    /**
+     * @brief Count markers of a specific type
+     * @param marker The marker type to count
+     * @return The number of cells with that marker
+     */
+    int count(Marker marker) const;
+
+    /**
+     * @brief Get all available (empty) positions
+     * @return Vector of empty positions
+     */
+    std::vector<Position> availablePositions() const;
+
+private:
+    std::array<Marker, 9> cells_;
 };
 
 } // namespace game::core
