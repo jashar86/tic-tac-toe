@@ -37,7 +37,6 @@ classDiagram
     class GameState {
         +Board board
         +GameStatus status
-        
     }
 
     class Board {
@@ -157,102 +156,36 @@ stateDiagram-v2
 ```mermaid
 classDiagram
 
-    class StageCoordinator {
-
+    class TicTacToeApp {
+        + TicTacToeApp(player_generator: PlayerGenerator, game_start: GameStartListener, game_finished: GameFinishedListener)
+        + run()
     }
 
-    class WelcomeStage {
+    class PlayerGenerator {
         <<interface>>
-        + enter(callback: WelcomeStageFinishedCallback)
+        +generatePlayers() Result~Player[2],Quit~
     }
-
-    class WelcomeStageFinishedCallback {
-        <<interface>>
-        + onQuit()
-        + onGameStart(players: Player[2])
-    }
-
-    class GameStartingStage {
-        <<interface>>
-        + enter(callback: GameReadyCallback)
-    }
-
-    class GameReadyCallback {
-        <<interface>>
-        + onGameReady()
-    }
-
-    class PlayerTurnStage {
-        <<interface>>
-        + enter(state: GameState, callback: )
-    }
-
-    class PlayerTurnFinishedCallback {
-        <<interface>>
-        + onQuit()
-        + onMoveSelected(move: Position)
-    }
-
-    StageCoordinator *-- WelcomeStage
-    StageCoordinator --> WelcomeStageFinishedCallback : creates
-    WelcomeStageFinishedCallback <-- WelcomeStage : calls 
-
-    StageCoordinator *-- PlayerTurnStage
-    StageCoordinator --> PlayerTurnFinishedCallback : creates
-    PlayerTurnFinishedCallback <-- PlayerTurnStage : calls
-
-
-```
----
-
----
-
-```mermaid
-classDiagram
 
     class Player {
-        +String name
-        +Agent agent
-    }
-
-    class ScoreBoard {
-        +int player1_wins
-        +int player2_wins
-        +int draws
-    }
-
-    class Agent {
         <<interface>>
-        + getNextMove(board: Board) : Position
+        + getName() String
+        + generateNextMove(board: GameBoard, maker: Marker) Result~Position,Quit~
     }
 
-    
-
-    class GameStartStage {
+    class GameStartListener {
         <<interface>>
-        + enter(players: Player[2], scores: ScoreBoard)
+        +onGameStarted() ContinueResult
     }
 
-    class PlayerTurnStage {
+    class GameFinishedListener {
         <<interface>>
-        + enter(player: Player)
+        + onGameEnded(scoreboard: Scoreboard)
     }
 
-    class ResultStage {
-        <<interface>>
-        + enter(scores: ScoreBoard)
-    }
+    TicTacToeApp *-- PlayerGenerator
+    TicTacToeApp *-- "2" Player
+    TicTacToeApp *-- GameStartListener
+    TicTacToeApp *-- GameFinishedListener
 
-    
-
-    StageCoordinator *-- GameStage
-    StageCoordinator *-- ResultStage
-
-    WelcomeStage ..> Player : Creates
-    GameStage ..> GameState
-    GameStage ..> ScoreBoard : Updates
-    ResultStage ..> ScoreBoard : Displays
-
-    Player *-- Agent
-
+    PlayerGenerator --> Player : generates
 ```
