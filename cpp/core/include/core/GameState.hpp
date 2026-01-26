@@ -32,20 +32,20 @@ public:
 
     /// \brief Get the board
     /// \return Const reference to the board
-    const Board& board() const;
+    const Board& getBoard() const;
 
     /// \brief Get whose turn it is
     /// \return The marker of the current player
-    Marker currentTurn() const;
-
+    Marker getCurrentTurn() const;
+g
     /// \brief Get the game status
     /// \return The current game status
-    GameStatus status() const;
+    GameStatus getStatus() const;
 
 private:
-    Board      mBoard;
-    Marker     mTurn;
-    GameStatus mStatus;
+    Board      board;
+    Marker     turn;
+    GameStatus status;
 };
 
 } // namespace game::core

@@ -4,28 +4,28 @@ namespace game::core
 {
 
 Position::Position(int index)
-    : mIndex(index)
+    : index(index)
 {
 }
 
 Position::Position(int row, int col)
-    : mIndex(row * 3 + col)
+    : index(row * 3 + col)
 {
 }
 
-int Position::index() const
+int Position::asIndex() const
 {
-    return mIndex;
+    return index;
 }
 
 int Position::row() const
 {
-    return mIndex / 3;
+    return index / 3;
 }
 
 int Position::col() const
 {
-    return mIndex % 3;
+    return index % 3;
 }
 
 bool Position::isValidIndex(int index)
@@ -40,7 +40,7 @@ bool Position::isValidRowCol(int row, int col)
 
 bool Position::operator==(const Position& other) const
 {
-    return mIndex == other.mIndex;
+    return index == other.index;
 }
 
 bool Position::operator!=(const Position& other) const

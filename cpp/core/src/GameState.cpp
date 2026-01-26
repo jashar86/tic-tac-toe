@@ -4,32 +4,32 @@ namespace game::core
 {
 
 GameState::GameState()
-    : mBoard()
-    , mTurn(Marker::X)
-    , mStatus(GameStatus::InProgress)
+    : board()
+    , turn(Marker::X)
+    , status(GameStatus::InProgress)
 {
 }
 
 GameState::GameState(const Board& board, Marker turn, GameStatus status)
-    : mBoard(board)
-    , mTurn(turn)
-    , mStatus(status)
+    : board(board)
+    , turn(turn)
+    , status(status)
 {
 }
 
-const Board& GameState::board() const
+const Board& GameState::getBoard() const
 {
-    return mBoard;
+    return board;
 }
 
-Marker GameState::currentTurn() const
+Marker GameState::getCurrentTurn() const
 {
-    return mTurn;
+    return turn;
 }
 
-GameStatus GameState::status() const
+GameStatus GameState::getStatus() const
 {
-    return mStatus;
+    return status;
 }
 
 } // namespace game::core

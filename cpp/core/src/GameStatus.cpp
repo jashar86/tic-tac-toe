@@ -3,7 +3,7 @@
 namespace game::core
 {
 
-bool isTerminal(GameStatus status)
+bool isGameOver(GameStatus status)
 {
     return status != GameStatus::InProgress;
 }

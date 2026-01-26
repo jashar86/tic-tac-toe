@@ -24,12 +24,12 @@ TEST(MarkerTest, XAndOAreDifferent)
 
 TEST(MarkerTest, OpponentOfXIsO)
 {
-    EXPECT_EQ(opponent(Marker::X), Marker::O);
+    EXPECT_EQ(opponentOf(Marker::X), Marker::O);
 }
 
 TEST(MarkerTest, OpponentOfOIsX)
 {
-    EXPECT_EQ(opponent(Marker::O), Marker::X);
+    EXPECT_EQ(opponentOf(Marker::O), Marker::X);
 }
 
 } // namespace game::core

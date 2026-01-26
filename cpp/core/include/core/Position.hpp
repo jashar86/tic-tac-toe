@@ -30,7 +30,7 @@ public:
 
     /// \brief Get linear index
     /// \return Index (0-8)
-    int index() const;
+    int asIndex() const;
 
     /// \brief Get row
     /// \return Row (0-2)
@@ -58,7 +58,7 @@ public:
     bool operator!=(const Position& other) const;
 
 private:
-    int mIndex;
+    int index; ///< board position index [0, 8]
 };
 
 } // namespace game::core

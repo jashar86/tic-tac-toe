@@ -6,29 +6,29 @@ namespace game::core
 {
 
 Board::Board()
-    : mCells()
+    : cells()
 {
-    // All mCells initialized to std::nullopt by default
+    // All cells initialized to std::nullopt by default
 }
 
 std::optional<Marker> Board::getMarker(const Position& pos) const
 {
-    return mCells[pos.index()];
+    return cells[pos.asIndex()];
 }
 
 bool Board::setMarker(const Position& pos, Marker marker)
 {
-    if (mCells[pos.index()].has_value())
+    if (cells[pos.asIndex()].has_value())
     {
         return false;
     }
-    mCells[pos.index()] = marker;
+    cells[pos.asIndex()] = marker;
     return true;
 }
 
 bool Board::isEmpty() const
 {
-    return std::none_of(mCells.begin(), mCells.end(), [](const auto& cell)
+    return std::none_of(cells.begin(), cells.end(), [](const auto& cell)
     {
         return cell.has_value();
     });
@@ -36,12 +36,12 @@ bool Board::isEmpty() const
 
 bool Board::isCellEmpty(const Position& pos) const
 {
-    return !mCells[pos.index()].has_value();
+    return !cells[pos.asIndex()].has_value();
 }
 
 bool Board::isFull() const
 {
-    return std::all_of(mCells.begin(), mCells.end(), [](const auto& cell)
+    return std::all_of(cells.begin(), cells.end(), [](const auto& cell)
     {
         return cell.has_value();
     });
@@ -49,7 +49,7 @@ bool Board::isFull() const
 
 int Board::count(Marker marker) const
 {
-    return std::count_if(mCells.begin(), mCells.end(), [marker](const auto& cell)
+    return std::count_if(cells.begin(), cells.end(), [marker](const auto& cell)
     {
         return cell.has_value() && cell.value() == marker;
     });
@@ -60,7 +60,7 @@ std::vector<Position> Board::availablePositions() const
     std::vector<Position> positions;
     for (int i = 0; i < 9; ++i)
     {
-        if (!mCells[i].has_value())
+        if (!cells[i].has_value())
         {
             positions.emplace_back(i);
         }

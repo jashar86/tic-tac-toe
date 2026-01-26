@@ -3,7 +3,7 @@
 namespace game::core
 {
 
-Marker opponent(Marker marker)
+Marker opponentOf(Marker marker)
 {
     return (marker == Marker::X) ? Marker::O : Marker::X;
 }

@@ -61,7 +61,7 @@ public:
     std::vector<Position> availablePositions() const;
 
 private:
-    std::array<std::optional<Marker>, 9> mCells;
+    std::array<std::optional<Marker>, 9> cells; ///< storage for board values
 };
 
 } // namespace game::core

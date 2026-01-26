@@ -9,7 +9,7 @@ namespace game::core
 TEST(PositionTest, ConstructFromIndex0)
 {
     Position pos(0);
-    EXPECT_EQ(pos.index(), 0);
+    EXPECT_EQ(pos.asIndex(), 0);
     EXPECT_EQ(pos.row(), 0);
     EXPECT_EQ(pos.col(), 0);
 }
@@ -17,7 +17,7 @@ TEST(PositionTest, ConstructFromIndex0)
 TEST(PositionTest, ConstructFromIndex4)
 {
     Position pos(4);
-    EXPECT_EQ(pos.index(), 4);
+    EXPECT_EQ(pos.asIndex(), 4);
     EXPECT_EQ(pos.row(), 1);
     EXPECT_EQ(pos.col(), 1);
 }
@@ -25,7 +25,7 @@ TEST(PositionTest, ConstructFromIndex4)
 TEST(PositionTest, ConstructFromIndex8)
 {
     Position pos(8);
-    EXPECT_EQ(pos.index(), 8);
+    EXPECT_EQ(pos.asIndex(), 8);
     EXPECT_EQ(pos.row(), 2);
     EXPECT_EQ(pos.col(), 2);
 }
@@ -34,7 +34,7 @@ TEST(PositionTest, ConstructFromIndex8)
 TEST(PositionTest, ConstructFromRowCol00)
 {
     Position pos(0, 0);
-    EXPECT_EQ(pos.index(), 0);
+    EXPECT_EQ(pos.asIndex(), 0);
     EXPECT_EQ(pos.row(), 0);
     EXPECT_EQ(pos.col(), 0);
 }
@@ -42,7 +42,7 @@ TEST(PositionTest, ConstructFromRowCol00)
 TEST(PositionTest, ConstructFromRowCol11)
 {
     Position pos(1, 1);
-    EXPECT_EQ(pos.index(), 4);
+    EXPECT_EQ(pos.asIndex(), 4);
     EXPECT_EQ(pos.row(), 1);
     EXPECT_EQ(pos.col(), 1);
 }
@@ -50,7 +50,7 @@ TEST(PositionTest, ConstructFromRowCol11)
 TEST(PositionTest, ConstructFromRowCol22)
 {
     Position pos(2, 2);
-    EXPECT_EQ(pos.index(), 8);
+    EXPECT_EQ(pos.asIndex(), 8);
     EXPECT_EQ(pos.row(), 2);
     EXPECT_EQ(pos.col(), 2);
 }
@@ -58,7 +58,7 @@ TEST(PositionTest, ConstructFromRowCol22)
 TEST(PositionTest, ConstructFromRowCol02)
 {
     Position pos(0, 2);
-    EXPECT_EQ(pos.index(), 2);
+    EXPECT_EQ(pos.asIndex(), 2);
     EXPECT_EQ(pos.row(), 0);
     EXPECT_EQ(pos.col(), 2);
 }
@@ -66,7 +66,7 @@ TEST(PositionTest, ConstructFromRowCol02)
 TEST(PositionTest, ConstructFromRowCol20)
 {
     Position pos(2, 0);
-    EXPECT_EQ(pos.index(), 6);
+    EXPECT_EQ(pos.asIndex(), 6);
     EXPECT_EQ(pos.row(), 2);
     EXPECT_EQ(pos.col(), 0);
 }
@@ -77,7 +77,7 @@ TEST(PositionTest, AllIndexPositions)
     for (int i = 0; i < 9; ++i)
     {
         Position pos(i);
-        EXPECT_EQ(pos.index(), i);
+        EXPECT_EQ(pos.asIndex(), i);
         EXPECT_EQ(pos.row(), i / 3);
         EXPECT_EQ(pos.col(), i % 3);
     }

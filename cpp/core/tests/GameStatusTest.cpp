@@ -39,24 +39,24 @@ TEST(GameStatusTest, AllValuesAreDifferent)
     EXPECT_NE(GameStatus::OWins, GameStatus::Draw);
 }
 
-TEST(GameStatusTest, IsTerminalReturnsFalseForInProgress)
+TEST(GameStatusTest, isGameOverReturnsFalseForInProgress)
 {
-    EXPECT_FALSE(isTerminal(GameStatus::InProgress));
+    EXPECT_FALSE(isGameOver(GameStatus::InProgress));
 }
 
-TEST(GameStatusTest, IsTerminalReturnsTrueForXWins)
+TEST(GameStatusTest, isGameOverReturnsTrueForXWins)
 {
-    EXPECT_TRUE(isTerminal(GameStatus::XWins));
+    EXPECT_TRUE(isGameOver(GameStatus::XWins));
 }
 
-TEST(GameStatusTest, IsTerminalReturnsTrueForOWins)
+TEST(GameStatusTest, isGameOverReturnsTrueForOWins)
 {
-    EXPECT_TRUE(isTerminal(GameStatus::OWins));
+    EXPECT_TRUE(isGameOver(GameStatus::OWins));
 }
 
-TEST(GameStatusTest, IsTerminalReturnsTrueForDraw)
+TEST(GameStatusTest, isGameOverReturnsTrueForDraw)
 {
-    EXPECT_TRUE(isTerminal(GameStatus::Draw));
+    EXPECT_TRUE(isGameOver(GameStatus::Draw));
 }
 
 } // namespace game::core

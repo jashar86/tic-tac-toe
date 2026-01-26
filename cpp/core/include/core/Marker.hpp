@@ -17,7 +17,7 @@ enum class Marker
 /// \brief Get the opponent's marker
 /// \param marker The current marker (X or O)
 /// \return The opponent's marker
-Marker opponent(Marker marker);
+Marker opponentOf(Marker marker);
 
 } // namespace game::core
 

@@ -19,7 +19,7 @@ enum class GameStatus
 /// \brief Check if the game has ended
 /// \param status The current game status
 /// \return true if the game has ended (win or draw)
-bool isTerminal(GameStatus status);
+bool isGameOver(GameStatus status);
 
 } // namespace game::core
 

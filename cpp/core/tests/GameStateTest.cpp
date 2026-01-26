@@ -19,23 +19,23 @@ protected:
 // Initial state
 TEST_F(GameStateTest, InitialBoardIsEmpty)
 {
-    EXPECT_TRUE(state.board().isEmpty());
+    EXPECT_TRUE(state.getBoard().isEmpty());
 }
 
 TEST_F(GameStateTest, InitialTurnIsX)
 {
-    EXPECT_EQ(state.currentTurn(), Marker::X);
+    EXPECT_EQ(state.getCurrentTurn(), Marker::X);
 }
 
 TEST_F(GameStateTest, InitialStatusIsInProgress)
 {
-    EXPECT_EQ(state.status(), GameStatus::InProgress);
+    EXPECT_EQ(state.getStatus(), GameStatus::InProgress);
 }
 
 // Board access
 TEST_F(GameStateTest, BoardReturnsCorrectReference)
 {
-    const Board& board = state.board();
+    const Board& board = state.getBoard();
     EXPECT_TRUE(board.isEmpty());
 }
 
@@ -47,11 +47,11 @@ TEST_F(GameStateTest, ConstructWithBoard)
 
     GameState customState(board, Marker::O, GameStatus::InProgress);
 
-    EXPECT_FALSE(customState.board().isEmpty());
-    EXPECT_TRUE(customState.board().getMarker(Position(0)).has_value());
-    EXPECT_EQ(customState.board().getMarker(Position(0)).value(), Marker::X);
-    EXPECT_EQ(customState.currentTurn(), Marker::O);
-    EXPECT_EQ(customState.status(), GameStatus::InProgress);
+    EXPECT_FALSE(customState.getBoard().isEmpty());
+    EXPECT_TRUE(customState.getBoard().getMarker(Position(0)).has_value());
+    EXPECT_EQ(customState.getBoard().getMarker(Position(0)).value(), Marker::X);
+    EXPECT_EQ(customState.getCurrentTurn(), Marker::O);
+    EXPECT_EQ(customState.getStatus(), GameStatus::InProgress);
 }
 
 TEST_F(GameStateTest, ConstructWithXWinsStatus)
@@ -59,7 +59,7 @@ TEST_F(GameStateTest, ConstructWithXWinsStatus)
     Board     board;
     GameState winState(board, Marker::X, GameStatus::XWins);
 
-    EXPECT_EQ(winState.status(), GameStatus::XWins);
+    EXPECT_EQ(winState.getStatus(), GameStatus::XWins);
 }
 
 TEST_F(GameStateTest, ConstructWithOWinsStatus)
@@ -67,7 +67,7 @@ TEST_F(GameStateTest, ConstructWithOWinsStatus)
     Board     board;
     GameState winState(board, Marker::O, GameStatus::OWins);
 
-    EXPECT_EQ(winState.status(), GameStatus::OWins);
+    EXPECT_EQ(winState.getStatus(), GameStatus::OWins);
 }
 
 TEST_F(GameStateTest, ConstructWithDrawStatus)
@@ -75,7 +75,7 @@ TEST_F(GameStateTest, ConstructWithDrawStatus)
     Board     board;
     GameState drawState(board, Marker::X, GameStatus::Draw);
 
-    EXPECT_EQ(drawState.status(), GameStatus::Draw);
+    EXPECT_EQ(drawState.getStatus(), GameStatus::Draw);
 }
 
 } // namespace game::core

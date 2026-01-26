@@ -127,7 +127,7 @@ TEST_F(BoardTest, AllPositionsAvailableOnEmptyBoard)
     // Verify all positions 0-8 are returned
     for (int i = 0; i < 9; ++i)
     {
-        EXPECT_EQ(available[i].index(), i);
+        EXPECT_EQ(available[i].asIndex(), i);
     }
 }
 
@@ -143,7 +143,7 @@ TEST_F(BoardTest, AvailablePositionsDecreaseAfterPlacing)
     std::vector<int> expectedIndices = {1, 2, 3, 5, 6, 7, 8};
     for (size_t i = 0; i < available.size(); ++i)
     {
-        EXPECT_EQ(available[i].index(), expectedIndices[i]);
+        EXPECT_EQ(available[i].asIndex(), expectedIndices[i]);
     }
 }
 
