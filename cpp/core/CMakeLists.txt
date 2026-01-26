@@ -3,6 +3,7 @@
 
 add_library(core
     src/Marker.cpp
+    src/GameLogic.cpp
     src/GameStatus.cpp
     src/Position.cpp
     src/Board.cpp

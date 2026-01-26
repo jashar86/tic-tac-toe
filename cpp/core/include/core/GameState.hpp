@@ -37,7 +37,7 @@ public:
     /// \brief Get whose turn it is
     /// \return The marker of the current player
     Marker getCurrentTurn() const;
-g
+
     /// \brief Get the game status
     /// \return The current game status
     GameStatus getStatus() const;
