@@ -25,12 +25,14 @@ add_executable(core_tests
     tests/PositionTest.cpp
     tests/BoardTest.cpp
     tests/GameStateTest.cpp
+    tests/GameLogicTest.cpp
 )
 
 target_link_libraries(core_tests
     PRIVATE
         core
         GTest::gtest_main
+        GTest::gmock
 )
 
 gtest_discover_tests(core_tests)

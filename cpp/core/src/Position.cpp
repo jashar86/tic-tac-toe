@@ -3,19 +3,9 @@
 namespace game::core
 {
 
-Position::Position(int index)
-    : index(index)
-{
-}
-
 Position::Position(int row, int col)
     : index(row * 3 + col)
 {
-}
-
-int Position::asIndex() const
-{
-    return index;
 }
 
 int Position::row() const

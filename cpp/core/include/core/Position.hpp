@@ -21,7 +21,7 @@ class Position
 public:
     /// \brief Construct position from linear index
     /// \param index Linear index (0-8)
-    explicit Position(int index);
+    constexpr explicit Position(int index) : index{index} {}
 
     /// \brief Construct position from row and column
     /// \param row Row index (0-2)
@@ -30,7 +30,7 @@ public:
 
     /// \brief Get linear index
     /// \return Index (0-8)
-    int asIndex() const;
+    constexpr int asIndex() const { return index; }
 
     /// \brief Get row
     /// \return Row (0-2)
