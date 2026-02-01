@@ -9,6 +9,7 @@ add_library(core
     src/Board.cpp
     src/GameState.cpp
     src/agents/RandomAgent.cpp
+    src/agents/MinmaxAgent.cpp
 )
 
 target_include_directories(core
@@ -28,6 +29,7 @@ add_executable(core_tests
     tests/GameStateTest.cpp
     tests/GameLogicTest.cpp
     tests/agents/RandomAgentTest.cpp
+    tests/agents/MinmaxAgentTest.cpp
 )
 
 target_link_libraries(core_tests
