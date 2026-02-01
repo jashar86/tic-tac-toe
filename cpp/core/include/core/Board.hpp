@@ -32,11 +32,11 @@ public:
     /// \return The marker at that position, or std::nullopt if empty
     std::optional<Marker> getMarker(const Position& pos) const;
 
-    /// \brief Set a marker at a position
-    /// \param pos The position to set
-    /// \param marker The marker to place
-    /// \return true if successful, false if cell was occupied
-    bool setMarker(const Position& pos, Marker marker);
+    /// \brief Returns a modified version of the board after applying the turn 
+    /// \param pos - cell position to make change
+    /// \param marker - marker to place on the board
+    /// \return modified board if turn is valid, unmodified otherwise
+    Board withMove(const Position& pos, Marker marker) const;
 
     /// \brief Check if the board is empty
     /// \return true if all cells are empty

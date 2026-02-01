@@ -23,7 +23,7 @@ public:
         {
             if (values[i].has_value())
             {
-                board.setMarker(Position{i}, values[i].value());
+                board = board.withMove(Position{i}, values[i].value());
             }
         }
     }
@@ -434,8 +434,7 @@ TEST_F(GameLogicTest, TakeTurn_POSITION_OUT_OF_BOUNDS)
 
 TEST_F(GameLogicTest, TakeTurn_CELL_IS_TAKEN)
 {
-    Board board{};
-    board.setMarker(Position{3}, Marker::X);
+    auto board = Board{}.withMove(Position(3), Marker::X);
     GameState state{board, Marker::O, GameStatus::InProgress};
     auto result = takeTurn(state, Position{3});
     ASSERT_FALSE(result.has_value());

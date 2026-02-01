@@ -16,14 +16,11 @@ std::optional<Marker> Board::getMarker(const Position& pos) const
     return cells[pos.asIndex()];
 }
 
-bool Board::setMarker(const Position& pos, Marker marker)
+Board Board::withMove(const Position& pos, Marker marker) const
 {
-    if (cells[pos.asIndex()].has_value())
-    {
-        return false;
-    }
-    cells[pos.asIndex()] = marker;
-    return true;
+    Board copy = *this;
+    copy.cells[pos.asIndex()] = marker;
+    return copy;
 }
 
 bool Board::isEmpty() const

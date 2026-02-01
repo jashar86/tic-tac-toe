@@ -37,22 +37,14 @@ TEST_F(BoardTest, NewBoardIsNotFull)
 TEST_F(BoardTest, SetMarkerOnEmptyCell)
 {
     Position pos(0);
-    EXPECT_TRUE(board.setMarker(pos, Marker::X));
-    EXPECT_TRUE(board.getMarker(pos).has_value());
-    EXPECT_EQ(board.getMarker(pos).value(), Marker::X);
-}
-
-TEST_F(BoardTest, SetMarkerOnOccupiedCellFails)
-{
-    Position pos(0);
-    board.setMarker(pos, Marker::X);
-    EXPECT_FALSE(board.setMarker(pos, Marker::O));
+    ASSERT_FALSE(board.getMarker(pos));
+    board = board.withMove(pos, Marker::X);
     EXPECT_EQ(board.getMarker(pos).value(), Marker::X);
 }
 
 TEST_F(BoardTest, BoardNotEmptyAfterSettingMarker)
 {
-    board.setMarker(Position(4), Marker::X);
+    board = board.withMove(Position(4), Marker::X);
     EXPECT_FALSE(board.isEmpty());
 }
 
@@ -65,7 +57,7 @@ TEST_F(BoardTest, CellIsEmptyByDefault)
 TEST_F(BoardTest, CellNotEmptyAfterSettingMarker)
 {
     Position pos(0);
-    board.setMarker(pos, Marker::X);
+    board = board.withMove(pos, Marker::X);
     EXPECT_FALSE(board.isCellEmpty(pos));
 }
 
@@ -73,29 +65,29 @@ TEST_F(BoardTest, CellNotEmptyAfterSettingMarker)
 TEST_F(BoardTest, BoardIsFullWhenAllCellsFilled)
 {
     // Fill the board
-    board.setMarker(Position(0), Marker::X);
-    board.setMarker(Position(1), Marker::O);
-    board.setMarker(Position(2), Marker::X);
-    board.setMarker(Position(3), Marker::O);
-    board.setMarker(Position(4), Marker::X);
-    board.setMarker(Position(5), Marker::O);
-    board.setMarker(Position(6), Marker::X);
-    board.setMarker(Position(7), Marker::O);
-    board.setMarker(Position(8), Marker::X);
+    board =  board.withMove(Position(0), Marker::X)
+                  .withMove(Position(1), Marker::O)
+                  .withMove(Position(2), Marker::X)
+                  .withMove(Position(3), Marker::O)
+                  .withMove(Position(4), Marker::X)
+                  .withMove(Position(5), Marker::O)
+                  .withMove(Position(6), Marker::X)
+                  .withMove(Position(7), Marker::O)
+                  .withMove(Position(8), Marker::X);
 
     EXPECT_TRUE(board.isFull());
 }
 
 TEST_F(BoardTest, BoardNotFullWithOneMissing)
 {
-    board.setMarker(Position(0), Marker::X);
-    board.setMarker(Position(1), Marker::O);
-    board.setMarker(Position(2), Marker::X);
-    board.setMarker(Position(3), Marker::O);
-    board.setMarker(Position(4), Marker::X);
-    board.setMarker(Position(5), Marker::O);
-    board.setMarker(Position(6), Marker::X);
-    board.setMarker(Position(7), Marker::O);
+    board = board.withMove(Position(0), Marker::X)
+                 .withMove(Position(1), Marker::O)
+                 .withMove(Position(2), Marker::X)
+                 .withMove(Position(3), Marker::O)
+                 .withMove(Position(4), Marker::X)
+                 .withMove(Position(5), Marker::O)
+                 .withMove(Position(6), Marker::X)
+                 .withMove(Position(7), Marker::O);
     // Position 8 left empty
 
     EXPECT_FALSE(board.isFull());
@@ -110,9 +102,9 @@ TEST_F(BoardTest, CountZeroOnEmptyBoard)
 
 TEST_F(BoardTest, CountAfterPlacingMarkers)
 {
-    board.setMarker(Position(0), Marker::X);
-    board.setMarker(Position(1), Marker::X);
-    board.setMarker(Position(2), Marker::O);
+    board = board.withMove(Position(0), Marker::X)
+                 .withMove(Position(1), Marker::X)
+                 .withMove(Position(2), Marker::O);
 
     EXPECT_EQ(board.count(Marker::X), 2);
     EXPECT_EQ(board.count(Marker::O), 1);
@@ -133,8 +125,8 @@ TEST_F(BoardTest, AllPositionsAvailableOnEmptyBoard)
 
 TEST_F(BoardTest, AvailablePositionsDecreaseAfterPlacing)
 {
-    board.setMarker(Position(0), Marker::X);
-    board.setMarker(Position(4), Marker::O);
+    board = board.withMove(Position(0), Marker::X)
+                 .withMove(Position(4), Marker::O);
 
     auto available = board.availablePositions();
     ASSERT_EQ(available.size(), 7u);
@@ -151,7 +143,7 @@ TEST_F(BoardTest, NoAvailablePositionsOnFullBoard)
 {
     for (int i = 0; i < 9; ++i)
     {
-        board.setMarker(Position(i), (i % 2 == 0) ? Marker::X : Marker::O);
+        board = board.withMove(Position(i), (i % 2 == 0) ? Marker::X : Marker::O);
     }
 
     auto available = board.availablePositions();
@@ -161,7 +153,7 @@ TEST_F(BoardTest, NoAvailablePositionsOnFullBoard)
 // Row/col access
 TEST_F(BoardTest, SetAndGetByRowCol)
 {
-    board.setMarker(Position(1, 2), Marker::O);
+    board = board.withMove(Position(1, 2), Marker::O);
     EXPECT_TRUE(board.getMarker(Position(1, 2)).has_value());
     EXPECT_EQ(board.getMarker(Position(1, 2)).value(), Marker::O);
     EXPECT_EQ(board.getMarker(Position(5)).value(), Marker::O); // index 5 = row 1, col 2

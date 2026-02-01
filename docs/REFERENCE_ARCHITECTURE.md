@@ -132,7 +132,7 @@ classDiagram
 Each turn follows a simple **validate → apply → evaluate** pipeline. The function returns a `Result` type—either a new game state on success, or an error describing why the move was rejected.
 
 ```python
-def takeTurn(state: GameState, position: Position, marker: Marker) -> MoveResult:
+def takeTurn(state: GameState, position: Position) -> MoveResult:
     if isValid(state.board, position, marker):
         new_board = state.board.withMove(position, marker)
         new_status = checkStatus(new_board)
@@ -152,7 +152,7 @@ Rules are pure functions with no side effects—given the same inputs, they alwa
 A move is valid if and only if the target cell exists and is unoccupied:
 
 ```python
-def isValidMove(board: Board, position: Position, marker: Marker) -> bool:
+def isValidMove(board: Board, position: Position) -> bool:
     return board.isPositionWithinBounds(position) and board.isEmpty(position)
 ```
 
@@ -168,10 +168,8 @@ def checkGameStatus(board: Board) -> GameStatus:
         return GameStatus::O_WINS
     elif board.isFull():
         return GameStatus::DRAW
-    elif board.count(Marker::X) > board.count(Marker::O):
-        return GameStatus::O_TURN
     else:
-        return GameStatus::X_TURN
+        return GameStatus::IN_PROGRESS
 ```
 
 ---

@@ -74,9 +74,8 @@ std::expected<GameState, TurnError> takeTurn(GameState const& prior, Position co
         return std::unexpected(TurnError::CELL_IS_TAKEN);
     }
 
-    Board next = prior.getBoard();
-    next.setMarker(position, prior.getCurrentTurn());
-    const auto turn = opponentOf(prior.getCurrentTurn());
+    const auto next   = prior.getBoard().withMove(position, prior.getCurrentTurn());
+    const auto turn   = opponentOf(prior.getCurrentTurn());
     const auto status = checkGameStatus(next);
     return GameState{next, turn, status};
 }

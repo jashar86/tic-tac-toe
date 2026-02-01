@@ -42,8 +42,7 @@ TEST_F(GameStateTest, BoardReturnsCorrectReference)
 // Construction with parameters
 TEST_F(GameStateTest, ConstructWithBoard)
 {
-    Board board;
-    board.setMarker(Position(0), Marker::X);
+    auto board = Board{}.withMove(Position(0), Marker::X);
 
     GameState customState(board, Marker::O, GameStatus::InProgress);
 
