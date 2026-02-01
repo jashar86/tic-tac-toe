@@ -8,6 +8,7 @@ add_library(core
     src/Position.cpp
     src/Board.cpp
     src/GameState.cpp
+    src/agents/RandomAgent.cpp
 )
 
 target_include_directories(core
@@ -26,6 +27,7 @@ add_executable(core_tests
     tests/BoardTest.cpp
     tests/GameStateTest.cpp
     tests/GameLogicTest.cpp
+    tests/agents/RandomAgentTest.cpp
 )
 
 target_link_libraries(core_tests
@@ -33,6 +35,11 @@ target_link_libraries(core_tests
         core
         GTest::gtest_main
         GTest::gmock
+)
+
+target_include_directories(core_tests
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/mocks
 )
 
 gtest_discover_tests(core_tests)
