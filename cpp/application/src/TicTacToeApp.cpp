@@ -16,9 +16,7 @@ TicTacToeApp::TicTacToeApp(std::shared_ptr<SessionGenerator> sessGen,
 
 void TicTacToeApp::run()
 {
-    bool running = true;
-
-    while (running)
+    while (true)
     {
         // Welcome stage: create a new session
         auto sessionResult = sessionGenerator->startNewSession();
@@ -80,29 +78,46 @@ void TicTacToeApp::run()
 
 bool TicTacToeApp::playTurns(Session& session)
 {
+    constexpr int MAX_INVALID_MOVE_RETRIES = 10;
+
     while (session.isActive())
     {
         auto currentPlayer = session.getCurrentPlayer();
         auto currentState = session.getGameState();
 
-        // Get the next move from the current player
-        auto moveResult = currentPlayer->generateNextMove(
-            currentState.getBoard(), currentState.getCurrentTurn());
+        int invalidMoveCount = 0;
+        bool validMoveMade = false;
 
-        if (!moveResult.has_value())
+        while (!validMoveMade && invalidMoveCount < MAX_INVALID_MOVE_RETRIES)
         {
-            // Player quit
+            // Get the next move from the current player
+            auto moveResult = currentPlayer->generateNextMove(
+                currentState.getBoard(), currentState.getCurrentTurn());
+
+            if (!moveResult.has_value())
+            {
+                // Player quit
+                return false;
+            }
+
+            // Apply the move
+            auto turnResult = game::core::takeTurn(currentState, moveResult.value());
+            if (turnResult.has_value())
+            {
+                session.setGameState(turnResult.value());
+                validMoveMade = true;
+            }
+            else
+            {
+                ++invalidMoveCount;
+            }
+        }
+
+        if (!validMoveMade)
+        {
+            // Player exceeded retry limit - treat as implicit quit
             return false;
         }
-
-        // Apply the move
-        auto turnResult = game::core::takeTurn(currentState, moveResult.value());
-        if (turnResult.has_value())
-        {
-            session.setGameState(turnResult.value());
-        }
-        // If turn was invalid, the game state doesn't change and we try again
-        // In a real implementation, we might want to handle this differently
     }
 
     return true;
@@ -115,15 +130,15 @@ void TicTacToeApp::updateScoreboard(Session& session)
     switch (status)
     {
     case game::core::GameStatus::XWins:
-        session.getScoreboard().recordPlayer1Win();
+        session.recordPlayer1Win();
         break;
 
     case game::core::GameStatus::OWins:
-        session.getScoreboard().recordPlayer2Win();
+        session.recordPlayer2Win();
         break;
 
     case game::core::GameStatus::Draw:
-        session.getScoreboard().recordDraw();
+        session.recordDraw();
         break;
 
     case game::core::GameStatus::InProgress:

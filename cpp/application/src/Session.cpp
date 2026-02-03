@@ -21,14 +21,24 @@ std::shared_ptr<Player> Session::getPlayer2() const
     return player2;
 }
 
-Scoreboard& Session::getScoreboard()
+const Scoreboard& Session::getScoreboard() const
 {
     return scoreboard;
 }
 
-const Scoreboard& Session::getScoreboard() const
+void Session::recordPlayer1Win()
 {
-    return scoreboard;
+    scoreboard.recordPlayer1Win();
+}
+
+void Session::recordPlayer2Win()
+{
+    scoreboard.recordPlayer2Win();
+}
+
+void Session::recordDraw()
+{
+    scoreboard.recordDraw();
 }
 
 const game::core::GameState& Session::getGameState() const

@@ -27,13 +27,13 @@ public:
 
     /// \brief Get the player's display name
     /// \return The player's name
-    virtual std::string getName() const = 0;
+    [[nodiscard]] virtual std::string getName() const = 0;
 
     /// \brief Generate the next move for this player
     /// \param board The current board state
     /// \param marker The marker this player is using (X or O)
     /// \return The chosen position, or Quit if user wants to exit
-    virtual std::expected<game::core::Position, Quit> generateNextMove(
+    [[nodiscard]] virtual std::expected<game::core::Position, Quit> generateNextMove(
         const game::core::Board& board,
         game::core::Marker marker) = 0;
 };

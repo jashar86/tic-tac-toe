@@ -11,44 +11,47 @@ namespace game::app
 ///
 /// The Scoreboard maintains counts of wins for each player and draws.
 /// It provides methods to record outcomes and query statistics.
+///
+/// \note This class is NOT thread-safe. External synchronization is required
+///       if accessed from multiple threads.
 class Scoreboard
 {
 public:
-    Scoreboard();
+    Scoreboard() noexcept = default;
     ~Scoreboard() = default;
 
     /// \brief Get the number of player 1 wins
     /// \return The player 1 win count
-    int getPlayer1Wins() const;
+    [[nodiscard]] int getPlayer1Wins() const noexcept;
 
     /// \brief Get the number of player 2 wins
     /// \return The player 2 win count
-    int getPlayer2Wins() const;
+    [[nodiscard]] int getPlayer2Wins() const noexcept;
 
     /// \brief Get the number of draws
     /// \return The draw count
-    int getDraws() const;
+    [[nodiscard]] int getDraws() const noexcept;
 
     /// \brief Get the total number of games played
     /// \return Sum of wins and draws
-    int getTotalGames() const;
+    [[nodiscard]] int getTotalGames() const noexcept;
 
     /// \brief Record a win for player 1
-    void recordPlayer1Win();
+    void recordPlayer1Win() noexcept;
 
     /// \brief Record a win for player 2
-    void recordPlayer2Win();
+    void recordPlayer2Win() noexcept;
 
     /// \brief Record a draw
-    void recordDraw();
+    void recordDraw() noexcept;
 
     /// \brief Reset all counters to zero
-    void reset();
+    void reset() noexcept;
 
 private:
-    int player1Wins;
-    int player2Wins;
-    int draws;
+    int player1Wins{0};
+    int player2Wins{0};
+    int draws{0};
 };
 
 } // namespace game::app

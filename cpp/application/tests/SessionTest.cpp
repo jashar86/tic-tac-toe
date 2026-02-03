@@ -55,12 +55,12 @@ TEST_F(SessionTest, NewSessionIsActive)
     EXPECT_TRUE(session.isActive());
 }
 
-TEST_F(SessionTest, CanModifyScoreboard)
+TEST_F(SessionTest, CanRecordGameOutcomes)
 {
     Session session(player1, player2);
 
-    session.getScoreboard().recordPlayer1Win();
-    session.getScoreboard().recordDraw();
+    session.recordPlayer1Win();
+    session.recordDraw();
 
     EXPECT_EQ(session.getScoreboard().getPlayer1Wins(), 1);
     EXPECT_EQ(session.getScoreboard().getDraws(), 1);
@@ -96,7 +96,7 @@ TEST_F(SessionTest, ResetGameClearsBoard)
 TEST_F(SessionTest, ResetGamePreservesScoreboard)
 {
     Session session(player1, player2);
-    session.getScoreboard().recordPlayer1Win();
+    session.recordPlayer1Win();
 
     session.resetGame();
 

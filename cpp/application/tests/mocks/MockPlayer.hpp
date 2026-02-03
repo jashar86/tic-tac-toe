@@ -38,7 +38,8 @@ public:
         {
             return game::core::Position(plannedMoves[moveIndex++]);
         }
-        return game::core::Position(0);
+        // No more planned moves - signal quit to prevent infinite loops
+        return std::unexpected(Quit{"MockPlayer exhausted planned moves"});
     }
 
     void setQuit(bool quit)

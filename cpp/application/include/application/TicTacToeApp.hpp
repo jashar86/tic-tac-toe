@@ -39,11 +39,6 @@ public:
     void run();
 
 private:
-    /// \brief Execute a single game within a session
-    /// \param session The current session
-    /// \return true if the game completed normally, false if quit requested
-    bool playGame(Session& session);
-
     /// \brief Execute player turns until the game ends
     /// \param session The current session
     /// \return true if turns completed normally, false if quit requested
