@@ -5,6 +5,11 @@
 namespace game::app
 {
 
+namespace
+{
+constexpr int MAX_INVALID_MOVE_RETRIES = 10;
+} // namespace
+
 TicTacToeApp::TicTacToeApp(std::shared_ptr<SessionGenerator> sessGen,
                            std::shared_ptr<GameStartListener> startListener,
                            std::shared_ptr<GameFinishedListener> finishListener)
@@ -18,116 +23,117 @@ void TicTacToeApp::run()
 {
     while (true)
     {
-        // Welcome stage: create a new session
-        auto sessionResult = sessionGenerator->startNewSession();
-        if (!sessionResult.has_value())
+        auto session = createSession();
+        if (!session.has_value())
         {
-            // User quit from welcome screen
             return;
         }
 
-        auto session = std::move(sessionResult.value());
-        bool sessionActive = true;
-
-        while (sessionActive)
+        bool continueToNewSession = runSessionLoop(**session);
+        if (!continueToNewSession)
         {
-            // Game Start stage
-            auto startResult = gameStartListener->onGameStarted(*session);
-            if (startResult == ContinuationResult::QUIT)
-            {
-                return;
-            }
-            if (startResult == ContinuationResult::RESET)
-            {
-                sessionActive = false;
-                continue;
-            }
-
-            // Player Turns stage
-            if (!playTurns(*session))
-            {
-                // Player quit during game
-                return;
-            }
-
-            // Update scoreboard with game result
-            updateScoreboard(*session);
-
-            // Game Finished stage
-            auto finishResult = gameFinishedListener->onGameFinished(*session);
-
-            switch (finishResult)
-            {
-            case ContinuationResult::CONTINUE:
-                // Play again - reset the game state
-                session->resetGame();
-                break;
-
-            case ContinuationResult::RESET:
-                // Return to welcome screen (new session)
-                sessionActive = false;
-                break;
-
-            case ContinuationResult::QUIT:
-                // Exit the application
-                return;
-            }
+            return;
         }
     }
+}
+
+std::optional<std::unique_ptr<Session>> TicTacToeApp::createSession()
+{
+    auto sessionResult = sessionGenerator->startNewSession();
+    if (!sessionResult.has_value())
+    {
+        return std::nullopt;
+    }
+    return std::move(sessionResult.value());
+}
+
+bool TicTacToeApp::runSessionLoop(Session& session)
+{
+    while (true)
+    {
+        auto gameResult = playSingleGame(session);
+        if (!gameResult.has_value())
+        {
+            return false; // Quit during game
+        }
+
+        switch (gameResult.value())
+        {
+        case ContinuationResult::CONTINUE:
+            session.resetGame();
+            break;
+
+        case ContinuationResult::RESET:
+            return true; // Start new session
+
+        case ContinuationResult::QUIT:
+            return false;
+        }
+    }
+}
+
+std::optional<ContinuationResult> TicTacToeApp::playSingleGame(Session& session)
+{
+    auto startResult = gameStartListener->onGameStarted(session);
+    if (startResult == ContinuationResult::QUIT)
+    {
+        return std::nullopt;
+    }
+    if (startResult == ContinuationResult::RESET)
+    {
+        return ContinuationResult::RESET;
+    }
+
+    if (!playTurns(session))
+    {
+        return std::nullopt;
+    }
+
+    updateScoreboard(session);
+    return gameFinishedListener->onGameFinished(session);
 }
 
 bool TicTacToeApp::playTurns(Session& session)
 {
-    constexpr int MAX_INVALID_MOVE_RETRIES = 10;
-
     while (session.isActive())
     {
-        auto currentPlayer = session.getCurrentPlayer();
-        auto currentState = session.getGameState();
-
-        int invalidMoveCount = 0;
-        bool validMoveMade = false;
-
-        while (!validMoveMade && invalidMoveCount < MAX_INVALID_MOVE_RETRIES)
+        if (!getValidMoveFromCurrentPlayer(session))
         {
-            // Get the next move from the current player
-            auto moveResult = currentPlayer->generateNextMove(
-                currentState.getBoard(), currentState.getCurrentTurn());
-
-            if (!moveResult.has_value())
-            {
-                // Player quit
-                return false;
-            }
-
-            // Apply the move
-            auto turnResult = game::core::takeTurn(currentState, moveResult.value());
-            if (turnResult.has_value())
-            {
-                session.setGameState(turnResult.value());
-                validMoveMade = true;
-            }
-            else
-            {
-                ++invalidMoveCount;
-            }
-        }
-
-        if (!validMoveMade)
-        {
-            // Player exceeded retry limit - treat as implicit quit
             return false;
         }
     }
-
     return true;
+}
+
+bool TicTacToeApp::getValidMoveFromCurrentPlayer(Session& session)
+{
+    auto currentPlayer = session.getCurrentPlayer();
+    auto currentState = session.getGameState();
+
+    for (int attempt = 0; attempt < MAX_INVALID_MOVE_RETRIES; ++attempt)
+    {
+        auto moveResult = currentPlayer->generateNextMove(
+            currentState.getBoard(), currentState.getCurrentTurn());
+
+        if (!moveResult.has_value())
+        {
+            return false;
+        }
+
+        auto turnResult = game::core::takeTurn(currentState, moveResult.value());
+        if (turnResult.has_value())
+        {
+            session.setGameState(turnResult.value());
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void TicTacToeApp::updateScoreboard(Session& session)
 {
-    auto status = session.getGameState().getStatus();
-
-    switch (status)
+    switch (session.getGameState().getStatus())
     {
     case game::core::GameStatus::XWins:
         session.recordPlayer1Win();
@@ -142,7 +148,6 @@ void TicTacToeApp::updateScoreboard(Session& session)
         break;
 
     case game::core::GameStatus::InProgress:
-        // Should not happen, but handle gracefully
         break;
     }
 }

@@ -1,8 +1,8 @@
 #include "application/TicTacToeApp.hpp"
-#include "mocks/MockGameFinishedListener.hpp"
-#include "mocks/MockGameStartListener.hpp"
-#include "mocks/MockPlayer.hpp"
-#include "mocks/MockSessionGenerator.hpp"
+#include "MockGameFinishedListener.hpp"
+#include "MockGameStartListener.hpp"
+#include "MockPlayer.hpp"
+#include "MockSessionGenerator.hpp"
 #include "core/GameLogic.hpp"
 
 #include <gmock/gmock.h>

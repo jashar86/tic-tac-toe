@@ -5,6 +5,7 @@
 /// \brief Main application class that orchestrates the game flow
 
 #include <memory>
+#include <optional>
 
 #include "application/GameFinishedListener.hpp"
 #include "application/GameStartListener.hpp"
@@ -39,10 +40,29 @@ public:
     void run();
 
 private:
+    /// \brief Create a new session from the welcome screen
+    /// \return The new session, or nullopt if user quit
+    [[nodiscard]] std::optional<std::unique_ptr<Session>> createSession();
+
+    /// \brief Run the game loop for a single session
+    /// \param session The session to run games in
+    /// \return true to continue with new session, false to quit
+    [[nodiscard]] bool runSessionLoop(Session& session);
+
+    /// \brief Play a single game within a session
+    /// \param session The current session
+    /// \return The continuation result from the game finished listener
+    [[nodiscard]] std::optional<ContinuationResult> playSingleGame(Session& session);
+
     /// \brief Execute player turns until the game ends
     /// \param session The current session
     /// \return true if turns completed normally, false if quit requested
-    bool playTurns(Session& session);
+    [[nodiscard]] bool playTurns(Session& session);
+
+    /// \brief Get a valid move from the current player with retry logic
+    /// \param session The current session
+    /// \return true if a valid move was made, false if player quit
+    [[nodiscard]] bool getValidMoveFromCurrentPlayer(Session& session);
 
     /// \brief Update the scoreboard based on game result
     /// \param session The session with completed game

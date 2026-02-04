@@ -29,7 +29,7 @@ add_executable(application_tests
 
 target_include_directories(application_tests
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/tests
+        ${CMAKE_CURRENT_SOURCE_DIR}/mocks
 )
 
 target_link_libraries(application_tests

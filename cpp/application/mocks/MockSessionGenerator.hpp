@@ -2,7 +2,7 @@
 #define GAME_APP_MOCK_SESSION_GENERATOR_HPP
 
 #include "application/SessionGenerator.hpp"
-#include "mocks/MockPlayer.hpp"
+#include "MockPlayer.hpp"
 
 namespace game::app::test
 {

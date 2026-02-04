@@ -1,5 +1,5 @@
 #include "application/Session.hpp"
-#include "mocks/MockPlayer.hpp"
+#include "MockPlayer.hpp"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
