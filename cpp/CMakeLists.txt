@@ -41,9 +41,10 @@ include(GoogleTest)
 add_subdirectory(core)
 add_subdirectory(application)
 add_subdirectory(presentation/console)
+add_subdirectory(presentation/ncurses)
 
 # ============================================================================
 # Main Executable
 # ============================================================================
 add_executable(tictactoe src/main.cpp)
-target_link_libraries(tictactoe PRIVATE presentation application core)
+target_link_libraries(tictactoe PRIVATE presentation presentation_ncurses application core)
