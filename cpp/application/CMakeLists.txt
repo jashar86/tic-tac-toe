@@ -2,6 +2,7 @@
 # Contains: TicTacToeApp, Session, Scoreboard, Stage FSM
 
 add_library(application
+    src/AgentPlayer.cpp
     src/Session.cpp
     src/Scoreboard.cpp
     src/TicTacToeApp.cpp
@@ -22,6 +23,7 @@ target_link_libraries(application
 # Application Tests
 # ============================================================================
 add_executable(application_tests
+    tests/AgentPlayerTest.cpp
     tests/SessionTest.cpp
     tests/ScoreboardTest.cpp
     tests/TicTacToeAppTest.cpp
@@ -30,6 +32,7 @@ add_executable(application_tests
 target_include_directories(application_tests
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/mocks
+        ${CMAKE_CURRENT_SOURCE_DIR}/../core/mocks
 )
 
 target_link_libraries(application_tests

@@ -1,12 +1,15 @@
 #include "presentation/Ncurses.hpp"
+#include "application/AgentPlayer.hpp"
 #include "application/ContinuationResult.hpp"
 #include "application/Session.hpp"
 #include "core/GameStatus.hpp"
 #include "core/Marker.hpp"
 
 #include <ncurses.h>
+#include <array>
 #include <memory>
 #include <string>
+#include <utility>
 
 namespace game::view
 {
@@ -461,6 +464,133 @@ app::ContinuationResult NcursesGameFinishedListener::onGameFinished(const app::S
 // NcursesSessionGenerator
 // ============================================================================
 
+namespace
+{
+
+enum class PlayerType
+{
+    Human,
+    CpuEasy,
+    CpuHard
+};
+
+struct PlayerTypeOption
+{
+    const char* label;
+    PlayerType type;
+};
+
+static constexpr std::array<PlayerTypeOption, 3> PLAYER_TYPE_OPTIONS = {{
+    {"Human",            PlayerType::Human},
+    {"Computer (Easy)",  PlayerType::CpuEasy},
+    {"Computer (Hard)",  PlayerType::CpuHard}
+}};
+
+/// \brief Draw a player type selection menu and return the chosen type, or Quit
+static std::expected<PlayerType, app::Quit>
+selectPlayerType(int playerNumber, std::string_view markerLabel)
+{
+    int selected = 0;
+
+    while (true)
+    {
+        erase();
+        ncurses_ui::drawTitle();
+
+        int menuRow = ncurses_ui::BOARD_START_ROW + 1;
+        int menuCol = ncurses_ui::BOARD_START_COL;
+
+        attron(COLOR_PAIR(colors::TITLE) | A_BOLD);
+        mvprintw(menuRow, menuCol, "Player %d (%.*s) - Select type:",
+                 playerNumber,
+                 static_cast<int>(markerLabel.size()), markerLabel.data());
+        attroff(COLOR_PAIR(colors::TITLE) | A_BOLD);
+
+        for (int i = 0; i < static_cast<int>(PLAYER_TYPE_OPTIONS.size()); ++i)
+        {
+            int row = menuRow + 2 + i;
+            if (i == selected)
+            {
+                attron(COLOR_PAIR(colors::HIGHLIGHT) | A_BOLD);
+                mvprintw(row, menuCol, " > %s", PLAYER_TYPE_OPTIONS[i].label);
+                attroff(COLOR_PAIR(colors::HIGHLIGHT) | A_BOLD);
+            }
+            else
+            {
+                mvprintw(row, menuCol, "   %s", PLAYER_TYPE_OPTIONS[i].label);
+            }
+        }
+
+        ncurses_ui::drawStatusBar("Up/Down: select | Enter/1-3: confirm | Q: quit");
+        refresh();
+
+        int ch = getch();
+        switch (ch)
+        {
+            case KEY_UP:
+            case 'w':
+            case 'W':
+                selected = (selected == 0)
+                    ? static_cast<int>(PLAYER_TYPE_OPTIONS.size()) - 1
+                    : selected - 1;
+                break;
+
+            case KEY_DOWN:
+            case 's':
+            case 'S':
+                selected = (selected == static_cast<int>(PLAYER_TYPE_OPTIONS.size()) - 1)
+                    ? 0
+                    : selected + 1;
+                break;
+
+            case '1':
+                return PLAYER_TYPE_OPTIONS[0].type;
+            case '2':
+                return PLAYER_TYPE_OPTIONS[1].type;
+            case '3':
+                return PLAYER_TYPE_OPTIONS[2].type;
+
+            case '\n':
+            case ' ':
+            case KEY_ENTER:
+                return PLAYER_TYPE_OPTIONS[selected].type;
+
+            case 'q':
+            case 'Q':
+                return std::unexpected(app::Quit{});
+
+            default:
+                break;
+        }
+    }
+}
+
+static std::shared_ptr<app::Player>
+createPlayer(PlayerType type, int playerNumber, const app::Scoreboard* scoreboard)
+{
+    std::string suffix = " (P" + std::to_string(playerNumber) + ")";
+
+    switch (type)
+    {
+        case PlayerType::Human:
+        {
+            auto player = std::make_shared<NcursesPlayer>(
+                "Player " + std::to_string(playerNumber));
+            player->setScoreboard(scoreboard);
+            return player;
+        }
+        case PlayerType::CpuEasy:
+            return app::createAgentPlayer(
+                "CPU Easy" + suffix, app::AgentDifficulty::Easy);
+        case PlayerType::CpuHard:
+            return app::createAgentPlayer(
+                "CPU Hard" + suffix, app::AgentDifficulty::Hard);
+    }
+    std::unreachable();
+}
+
+} // anonymous namespace
+
 std::expected<std::unique_ptr<app::Session>, app::Quit>
 NcursesSessionGenerator::startNewSession()
 {
@@ -469,43 +599,35 @@ NcursesSessionGenerator::startNewSession()
         return std::unexpected(app::Quit{});
     }
 
-    clear();
-    ncurses_ui::drawTitle();
-
-    int centerRow = LINES / 2;
-    int centerCol = COLS / 2;
-
-    attron(COLOR_PAIR(colors::TITLE) | A_BOLD);
-    mvprintw(centerRow - 2, centerCol - 11, "Welcome to Tic-Tac-Toe!");
-    attroff(COLOR_PAIR(colors::TITLE) | A_BOLD);
-
-    attron(COLOR_PAIR(colors::STATUS));
-    mvprintw(centerRow, centerCol - 16, "Press ENTER to start or Q to quit");
-    attroff(COLOR_PAIR(colors::STATUS));
-
-    refresh();
-
-    while (true)
+    auto p1Type = selectPlayerType(1, "X");
+    if (!p1Type.has_value())
     {
-        int ch = getch();
-        if (ch == '\n' || ch == KEY_ENTER)
-        {
-            break;
-        }
-        else if (ch == 'q' || ch == 'Q')
-        {
-            return std::unexpected(app::Quit{});
-        }
+        return std::unexpected(app::Quit{});
     }
 
-    auto p1 = std::make_shared<NcursesPlayer>("Player 1");
-    auto p2 = std::make_shared<NcursesPlayer>("Player 2");
+    auto p2Type = selectPlayerType(2, "O");
+    if (!p2Type.has_value())
+    {
+        return std::unexpected(app::Quit{});
+    }
+
+    // Create session first with temporary players, then inject scoreboard.
+    // We create the session with placeholder players, then replace them
+    // so NcursesPlayer instances can get the scoreboard reference.
+    auto p1 = createPlayer(p1Type.value(), 1, nullptr);
+    auto p2 = createPlayer(p2Type.value(), 2, nullptr);
     auto session = std::make_unique<app::Session>(p1, p2);
 
-    // Inject scoreboard reference so players can display scores during gameplay.
+    // Inject scoreboard reference into NcursesPlayer instances.
     // Safe: the Session owns the Scoreboard and outlives all generateNextMove calls.
-    p1->setScoreboard(&session->getScoreboard());
-    p2->setScoreboard(&session->getScoreboard());
+    if (auto* ncP1 = dynamic_cast<NcursesPlayer*>(p1.get()))
+    {
+        ncP1->setScoreboard(&session->getScoreboard());
+    }
+    if (auto* ncP2 = dynamic_cast<NcursesPlayer*>(p2.get()))
+    {
+        ncP2->setScoreboard(&session->getScoreboard());
+    }
 
     return session;
 }

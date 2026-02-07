@@ -1,4 +1,5 @@
 #include "presentation/Console.hpp"
+#include "application/AgentPlayer.hpp"
 #include "application/ContinuationResult.hpp"
 #include "application/Session.hpp"
 #include "core/GameStatus.hpp"
@@ -122,10 +123,72 @@ app::ContinuationResult ConsoleGameFinishedListener::onGameFinished(const app::S
     }
 }
 
+namespace
+{
+
+std::expected<std::shared_ptr<app::Player>, app::Quit>
+selectPlayer(int playerNumber, std::string_view markerLabel)
+{
+    auto printMenu = [&]()
+    {
+        std::cout << "\nSelect Player " << playerNumber
+                  << " (" << markerLabel << ") type:\n"
+                  << "  1. Human\n"
+                  << "  2. Computer (Easy)\n"
+                  << "  3. Computer (Hard)\n"
+                  << "Choice [1-3] (q to quit): ";
+    };
+
+    printMenu();
+
+    char choice{' '};
+    while (true)
+    {
+        if (!(std::cin >> choice))
+        {
+            return std::unexpected(app::Quit{});
+        }
+
+        switch (choice)
+        {
+            case '1':
+                return std::make_shared<ConsolePlayer>(
+                    "Player " + std::to_string(playerNumber));
+            case '2':
+                return app::createAgentPlayer(
+                    "CPU Easy (P" + std::to_string(playerNumber) + ")",
+                    app::AgentDifficulty::Easy);
+            case '3':
+                return app::createAgentPlayer(
+                    "CPU Hard (P" + std::to_string(playerNumber) + ")",
+                    app::AgentDifficulty::Hard);
+            case 'q':
+            case 'Q':
+                return std::unexpected(app::Quit{});
+            default:
+                std::cout << "Invalid choice.";
+                printMenu();
+                break;
+        }
+    }
+}
+
+} // anonymous namespace
+
 std::expected<std::unique_ptr<app::Session>, app::Quit> ConsoleSessionGenerator::startNewSession()
 {
-    return std::make_unique<app::Session>(std::make_shared<ConsolePlayer>("Player 1"),
-    std::make_shared<ConsolePlayer>("Player 2"));
+    std::cout << "\n===== TIC-TAC-TOE =====\n";
+
+    auto p1 = selectPlayer(1, "X");
+    if (!p1.has_value()) return std::unexpected(app::Quit{});
+
+    auto p2 = selectPlayer(2, "O");
+    if (!p2.has_value()) return std::unexpected(app::Quit{});
+
+    std::cout << "\n" << p1.value()->getName() << " (X) vs "
+              << p2.value()->getName() << " (O)\n" << std::endl;
+
+    return std::make_unique<app::Session>(std::move(p1.value()), std::move(p2.value()));
 }
 
 } // end namespace game::view
