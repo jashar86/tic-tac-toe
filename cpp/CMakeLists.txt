@@ -40,7 +40,7 @@ include(GoogleTest)
 # ============================================================================
 add_subdirectory(core)
 add_subdirectory(application)
-add_subdirectory(presentation)
+add_subdirectory(presentation/console)
 
 # ============================================================================
 # Main Executable

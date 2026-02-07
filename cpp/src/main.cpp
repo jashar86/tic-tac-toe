@@ -5,11 +5,15 @@
 /// The actual implementation will wire up the presentation layer
 /// to run the game.
 
-#include <iostream>
+#include <memory>
+#include <presentation/Console.hpp>
+#include <application/TicTacToeApp.hpp>
 
 int main()
 {
-    std::cout << "Tic-Tac-Toe - Skeleton Project" << std::endl;
-    std::cout << "Build successful!" << std::endl;
+    game::app::TicTacToeApp app{std::make_shared<game::view::ConsoleSessionGenerator>(),
+    std::make_shared<game::view::ConsoleGameStartListener>(),
+std::make_shared<game::view::ConsoleGameFinishedListener>()};
+    app.run();
     return 0;
 }
