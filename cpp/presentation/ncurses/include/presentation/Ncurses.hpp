@@ -26,16 +26,6 @@ public:
     NcursesContext& operator=(NcursesContext&&) = delete;
 };
 
-/// \brief Shared rendering utilities for ncurses UI
-namespace ncurses_ui
-{
-    void drawBoard(const core::Board& board, int selectedCell);
-    void drawTitle();
-    void drawStatusBar(std::string_view message);
-    void drawScoreboard(const app::Session& session);
-    [[nodiscard]] bool checkMinimumTerminalSize();
-} // namespace ncurses_ui
-
 class NcursesPlayer : public game::app::Player
 {
 public:

@@ -52,7 +52,6 @@ Dependencies flow inward: Presentation → Application → Core
 - Use Google Test/Mock framework
 - Place mocks in sibling `mocks/` folder (not inside `tests/`)
 - One test file per production class
-- Test names: `TestClass.TestScenario`
 
 ### Coverage
 - Test public interfaces, not implementation details

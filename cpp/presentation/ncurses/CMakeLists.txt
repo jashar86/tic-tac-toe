@@ -6,6 +6,11 @@ find_package(Curses REQUIRED)
 
 add_library(presentation_ncurses
     src/Ncurses.cpp
+    src/BoardRenderer.cpp
+    src/screens/GameBoardScreen.cpp
+    src/screens/GameResultScreen.cpp
+    src/screens/GameStartScreen.cpp
+    src/screens/PlayerSelectionScreen.cpp
 )
 
 target_include_directories(presentation_ncurses
