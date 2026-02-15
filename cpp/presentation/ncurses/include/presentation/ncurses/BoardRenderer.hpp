@@ -54,6 +54,18 @@ public:
     [[nodiscard]] static std::optional<std::array<int, 3>>
         getWinningCells(const core::Board& board, core::GameStatus status);
 
+    static void drawWinnerBanner(core::Marker winner);
+
+    static void drawDrawBanner();
+
+    static void runConfettiAnimation(int durationMs = 1500);
+
+    static void fadeIn(int delayMs = 30);
+
+    static void screenWipe(int durationMs = 200);
+
+    static void drawHelpPanel();
+
 private:
     static void drawCellContent(int row, int col,
                                 std::optional<core::Marker> marker,

@@ -32,14 +32,24 @@ NcursesContext::NcursesContext()
     {
         start_color();
         use_default_colors();
+
+        // Core game colors
         init_pair(colors::MARKER_X,    COLOR_RED,     -1);
         init_pair(colors::MARKER_O,    COLOR_BLUE,    -1);
         init_pair(colors::EMPTY_CELL,  COLOR_WHITE,   -1);
         init_pair(colors::BOARD_LINES, COLOR_WHITE,   -1);
+
+        // UI element colors
         init_pair(colors::TITLE,       COLOR_CYAN,    -1);
         init_pair(colors::STATUS,      COLOR_YELLOW,  -1);
         init_pair(colors::HIGHLIGHT,   COLOR_BLACK,   COLOR_WHITE);
         init_pair(colors::SCORE,       COLOR_GREEN,   -1);
+
+        // Additional UI colors
+        init_pair(colors::ERROR,       COLOR_MAGENTA, -1);
+        init_pair(colors::SUCCESS,     COLOR_GREEN,   -1);
+        init_pair(colors::MENU_ACTIVE, COLOR_CYAN,    -1);
+        init_pair(colors::DIM,         COLOR_WHITE,   -1);
     }
 }
 

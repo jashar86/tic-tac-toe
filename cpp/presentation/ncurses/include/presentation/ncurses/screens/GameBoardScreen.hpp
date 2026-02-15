@@ -36,6 +36,7 @@ private:
     int m_selectedCell{0};
     core::Position m_selectedPosition{0};
     bool m_positionSelected{false};
+    bool m_showHelp{false};
 };
 
 } // namespace game::view

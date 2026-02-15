@@ -16,12 +16,39 @@ GameResultScreen::GameResultScreen(const app::Session& session)
 
 void GameResultScreen::draw()
 {
-    clear();
-    BoardRenderer::drawTitle();
+    // Brief pause before showing result (builds anticipation)
+    napms(400);
+
+    // Screen wipe transition
+    BoardRenderer::screenWipe(150);
 
     const auto& board = m_session.getGameState().getBoard();
     auto status = m_session.getGameState().getStatus();
     auto winningCells = BoardRenderer::getWinningCells(board, status);
+
+    // Show celebration banner first
+    if (status == core::GameStatus::XWins)
+    {
+        BoardRenderer::drawWinnerBanner(core::Marker::X);
+        refresh();
+        BoardRenderer::runConfettiAnimation(1200);
+    }
+    else if (status == core::GameStatus::OWins)
+    {
+        BoardRenderer::drawWinnerBanner(core::Marker::O);
+        refresh();
+        BoardRenderer::runConfettiAnimation(1200);
+    }
+    else if (status == core::GameStatus::Draw)
+    {
+        BoardRenderer::drawDrawBanner();
+        refresh();
+        napms(800);
+    }
+
+    // Clear and show final result screen
+    clear();
+    BoardRenderer::drawTitle();
 
     // Draw board with winning cells highlighted
     if (winningCells.has_value())

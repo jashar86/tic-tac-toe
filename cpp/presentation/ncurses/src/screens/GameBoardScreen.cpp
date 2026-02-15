@@ -82,18 +82,35 @@ void GameBoardScreen::draw()
     BoardRenderer::drawScoreboardCompact(m_scoreboard);
 
     // Status bar with controls
-    std::string status = "Arrows/WASD: move | Enter/Space: place | 1-9: direct | Q: quit";
+    std::string status = "Arrows/WASD: move | Enter: place | 1-9: direct | ?: help | Q: quit";
     BoardRenderer::drawStatusBar(status);
 
     refresh();
+
+    // Show help panel overlay if requested
+    if (m_showHelp)
+    {
+        BoardRenderer::drawHelpPanel();
+    }
 }
 
 ScreenResult<app::ContinuationResult> GameBoardScreen::handleInput()
 {
     int ch = getch();
 
+    // If help is showing, any key closes it
+    if (m_showHelp)
+    {
+        m_showHelp = false;
+        return app::ContinuationResult::CONTINUE;
+    }
+
     switch (ch)
     {
+        case '?':
+            m_showHelp = true;
+            return app::ContinuationResult::CONTINUE;
+
         case 'q':
         case 'Q':
             return std::unexpected(QuitRequested{});
@@ -112,7 +129,9 @@ ScreenResult<app::ContinuationResult> GameBoardScreen::handleInput()
             // Flash the occupied cell to show it's taken
             BoardRenderer::flashCell(pos, m_board, 2);
             beep();
+            attron(COLOR_PAIR(colors::ERROR));
             BoardRenderer::drawStatusBar("That cell is taken! Choose another.");
+            attroff(COLOR_PAIR(colors::ERROR));
             refresh();
             napms(300);
             break;
@@ -169,7 +188,9 @@ ScreenResult<app::ContinuationResult> GameBoardScreen::handleInput()
             // Flash the occupied cell to show it's taken
             BoardRenderer::flashCell(m_selectedCell, m_board, 2);
             beep();
+            attron(COLOR_PAIR(colors::ERROR));
             BoardRenderer::drawStatusBar("That cell is taken! Choose another.");
+            attroff(COLOR_PAIR(colors::ERROR));
             refresh();
             napms(300);
             break;

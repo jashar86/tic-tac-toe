@@ -15,6 +15,9 @@ GameStartScreen::GameStartScreen(const app::Session& session)
 
 void GameStartScreen::draw()
 {
+    // Brief transition wipe
+    BoardRenderer::screenWipe(150);
+
     clear();
     BoardRenderer::drawTitle();
 

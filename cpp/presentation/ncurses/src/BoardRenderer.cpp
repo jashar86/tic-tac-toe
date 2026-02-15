@@ -3,6 +3,8 @@
 
 #include <ncurses.h>
 #include <algorithm>
+#include <cstdlib>
+#include <vector>
 
 namespace game::view
 {
@@ -418,6 +420,225 @@ BoardRenderer::getWinningCells(const core::Board& board, core::GameStatus status
     }
 
     return std::nullopt;
+}
+
+void BoardRenderer::drawWinnerBanner(core::Marker winner)
+{
+    int centerCol = COLS / 2;
+    int bannerRow = LINES / 2 - 4;
+
+    int colorPair = (winner == core::Marker::X) ? colors::MARKER_X : colors::MARKER_O;
+
+    attron(COLOR_PAIR(colorPair) | A_BOLD);
+
+    if (winner == core::Marker::X)
+    {
+        // Large X WINS! ASCII art
+        mvprintw(bannerRow,     centerCol - 20, " __  __  __        __ ___ _   _  ___  _ ");
+        mvprintw(bannerRow + 1, centerCol - 20, " \\ \\/ /  \\ \\      / /|_ _| \\ | |/ __|| |");
+        mvprintw(bannerRow + 2, centerCol - 20, "  \\  /    \\ \\ /\\ / /  | ||  \\| |\\__ \\|_|");
+        mvprintw(bannerRow + 3, centerCol - 20, "  /  \\     \\ V  V /   | || |\\  ||__) |_ ");
+        mvprintw(bannerRow + 4, centerCol - 20, " /_/\\_\\     \\_/\\_/   |___|_| \\_||___/(_)");
+    }
+    else
+    {
+        // Large O WINS! ASCII art
+        mvprintw(bannerRow,     centerCol - 20, "  ___   __        __ ___ _   _  ___  _ ");
+        mvprintw(bannerRow + 1, centerCol - 20, " / _ \\  \\ \\      / /|_ _| \\ | |/ __|| |");
+        mvprintw(bannerRow + 2, centerCol - 20, "| | | |  \\ \\ /\\ / /  | ||  \\| |\\__ \\|_|");
+        mvprintw(bannerRow + 3, centerCol - 20, "| |_| |   \\ V  V /   | || |\\  ||__) |_ ");
+        mvprintw(bannerRow + 4, centerCol - 20, " \\___/     \\_/\\_/   |___|_| \\_||___/(_)");
+    }
+
+    attroff(COLOR_PAIR(colorPair) | A_BOLD);
+}
+
+void BoardRenderer::drawDrawBanner()
+{
+    int centerCol = COLS / 2;
+    int bannerRow = LINES / 2 - 3;
+
+    attron(COLOR_PAIR(colors::STATUS) | A_BOLD);
+
+    mvprintw(bannerRow,     centerCol - 18, "  ____ _____  _    _     _____ __  __    _  _____ _____ ");
+    mvprintw(bannerRow + 1, centerCol - 18, " / ___|_   _|/ \\  | |   | ____|  \\/  |  / \\|_   _| ____|");
+    mvprintw(bannerRow + 2, centerCol - 18, " \\___ \\ | | / _ \\ | |   |  _| | |\\/| | / _ \\ | | |  _|  ");
+    mvprintw(bannerRow + 3, centerCol - 18, "  ___) || |/ ___ \\| |___| |___| |  | |/ ___ \\| | | |___ ");
+    mvprintw(bannerRow + 4, centerCol - 18, " |____/ |_/_/   \\_|_____|_____|_|  |_/_/   \\_|_| |_____|");
+
+    attroff(COLOR_PAIR(colors::STATUS) | A_BOLD);
+}
+
+void BoardRenderer::runConfettiAnimation(int durationMs)
+{
+    static const char confettiChars[] = "*+o.#@%&";
+    static const int confettiColors[] = {
+        colors::MARKER_X, colors::MARKER_O, colors::TITLE,
+        colors::SCORE, colors::STATUS
+    };
+
+    int numConfetti = 40;
+    int frames = durationMs / 50;
+
+    // Store confetti positions
+    struct Confetti {
+        int x, y;
+        int dy;
+        char ch;
+        int color;
+    };
+
+    std::vector<Confetti> particles;
+    particles.reserve(numConfetti);
+
+    // Initialize confetti at random positions at top
+    for (int i = 0; i < numConfetti; ++i)
+    {
+        Confetti c;
+        c.x = rand() % COLS;
+        c.y = rand() % 3;
+        c.dy = 1 + rand() % 2;
+        c.ch = confettiChars[rand() % (sizeof(confettiChars) - 1)];
+        c.color = confettiColors[rand() % 5];
+        particles.push_back(c);
+    }
+
+    for (int frame = 0; frame < frames; ++frame)
+    {
+        // Draw confetti
+        for (auto& c : particles)
+        {
+            if (c.y >= 0 && c.y < LINES - 2)
+            {
+                attron(COLOR_PAIR(c.color) | A_BOLD);
+                mvaddch(c.y, c.x, c.ch);
+                attroff(COLOR_PAIR(c.color) | A_BOLD);
+            }
+
+            // Move confetti down
+            c.y += c.dy;
+
+            // Respawn at top if fell off bottom
+            if (c.y >= LINES - 2)
+            {
+                c.y = 0;
+                c.x = rand() % COLS;
+                c.ch = confettiChars[rand() % (sizeof(confettiChars) - 1)];
+            }
+        }
+
+        refresh();
+        napms(50);
+
+        // Clear confetti positions for next frame (but don't erase the whole screen)
+        for (const auto& c : particles)
+        {
+            if (c.y - c.dy >= 0 && c.y - c.dy < LINES - 2)
+            {
+                mvaddch(c.y - c.dy, c.x, ' ');
+            }
+        }
+    }
+}
+
+void BoardRenderer::fadeIn(int delayMs)
+{
+    // Simple fade-in effect by progressively revealing the screen
+    refresh();
+    napms(delayMs);
+}
+
+void BoardRenderer::screenWipe(int durationMs)
+{
+    // Wipe effect: lines slide in from left to right
+    int frameDelay = durationMs / LINES;
+    if (frameDelay < 5) frameDelay = 5;
+
+    attron(COLOR_PAIR(colors::TITLE));
+    for (int row = 0; row < LINES; ++row)
+    {
+        // Wipe this row with a gradient
+        for (int step = 0; step < 3; ++step)
+        {
+            int startCol = (COLS * step) / 3;
+            int endCol = (COLS * (step + 1)) / 3;
+            for (int col = startCol; col < endCol; ++col)
+            {
+                mvaddch(row, col, ' ');
+            }
+        }
+        if (row % 3 == 0)
+        {
+            refresh();
+            napms(frameDelay);
+        }
+    }
+    attroff(COLOR_PAIR(colors::TITLE));
+    clear();
+    refresh();
+}
+
+void BoardRenderer::drawHelpPanel()
+{
+    int panelWidth = 44;
+    int panelHeight = 14;
+    int panelTop = (LINES - panelHeight) / 2;
+    int panelLeft = (COLS - panelWidth) / 2;
+
+    // Draw panel background
+    attron(COLOR_PAIR(colors::BOARD_LINES));
+    for (int row = 0; row < panelHeight; ++row)
+    {
+        mvhline(panelTop + row, panelLeft, ' ', panelWidth);
+    }
+
+    // Draw border
+    mvaddch(panelTop, panelLeft, ACS_ULCORNER);
+    mvhline(panelTop, panelLeft + 1, ACS_HLINE, panelWidth - 2);
+    mvaddch(panelTop, panelLeft + panelWidth - 1, ACS_URCORNER);
+
+    for (int row = 1; row < panelHeight - 1; ++row)
+    {
+        mvaddch(panelTop + row, panelLeft, ACS_VLINE);
+        mvaddch(panelTop + row, panelLeft + panelWidth - 1, ACS_VLINE);
+    }
+
+    mvaddch(panelTop + panelHeight - 1, panelLeft, ACS_LLCORNER);
+    mvhline(panelTop + panelHeight - 1, panelLeft + 1, ACS_HLINE, panelWidth - 2);
+    mvaddch(panelTop + panelHeight - 1, panelLeft + panelWidth - 1, ACS_LRCORNER);
+    attroff(COLOR_PAIR(colors::BOARD_LINES));
+
+    // Title
+    attron(COLOR_PAIR(colors::TITLE) | A_BOLD);
+    mvprintw(panelTop + 1, panelLeft + (panelWidth - 8) / 2, "CONTROLS");
+    attroff(COLOR_PAIR(colors::TITLE) | A_BOLD);
+
+    // Help content
+    int contentLeft = panelLeft + 3;
+    int row = panelTop + 3;
+
+    attron(COLOR_PAIR(colors::STATUS));
+    mvprintw(row++, contentLeft, "Navigation:");
+    attroff(COLOR_PAIR(colors::STATUS));
+
+    mvprintw(row++, contentLeft + 2, "Arrow keys / WASD   Move cursor");
+    mvprintw(row++, contentLeft + 2, "1-9                 Jump to cell");
+
+    row++;
+    attron(COLOR_PAIR(colors::STATUS));
+    mvprintw(row++, contentLeft, "Actions:");
+    attroff(COLOR_PAIR(colors::STATUS));
+
+    mvprintw(row++, contentLeft + 2, "Enter / Space       Place marker");
+    mvprintw(row++, contentLeft + 2, "Q                   Quit game");
+    mvprintw(row++, contentLeft + 2, "?                   Toggle this help");
+
+    row++;
+    attron(COLOR_PAIR(colors::DIM) | A_DIM);
+    mvprintw(row, panelLeft + (panelWidth - 22) / 2, "Press any key to close");
+    attroff(COLOR_PAIR(colors::DIM) | A_DIM);
+
+    refresh();
 }
 
 } // namespace game::view
