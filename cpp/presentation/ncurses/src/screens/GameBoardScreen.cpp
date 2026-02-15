@@ -34,11 +34,55 @@ void GameBoardScreen::draw()
     erase();
     BoardRenderer::drawTitle();
     BoardRenderer::drawBoard(m_board, m_selectedCell);
+
+    // Draw turn indicator panel
+    int boardCol = BoardRenderer::getBoardStartCol();
+    int boardRow = BoardRenderer::getBoardStartRow();
+    int panelWidth = 20;
+    int panelLeft = boardCol + BoardRenderer::BOARD_WIDTH + 3;
+
+    // Only draw side panel if there's room
+    if (panelLeft + panelWidth < COLS)
+    {
+        int colorPair = (m_marker == core::Marker::X) ? colors::MARKER_X : colors::MARKER_O;
+        std::string markerStr = (m_marker == core::Marker::X) ? "X" : "O";
+
+        // Panel border
+        attron(COLOR_PAIR(colorPair));
+        mvaddch(boardRow, panelLeft, ACS_ULCORNER);
+        for (int i = 1; i < panelWidth - 1; ++i) addch(ACS_HLINE);
+        addch(ACS_URCORNER);
+
+        for (int row = 1; row < 6; ++row)
+        {
+            mvaddch(boardRow + row, panelLeft, ACS_VLINE);
+            mvaddch(boardRow + row, panelLeft + panelWidth - 1, ACS_VLINE);
+        }
+
+        mvaddch(boardRow + 6, panelLeft, ACS_LLCORNER);
+        for (int i = 1; i < panelWidth - 1; ++i) addch(ACS_HLINE);
+        addch(ACS_LRCORNER);
+
+        // YOUR TURN header
+        attron(A_BOLD | A_REVERSE);
+        mvprintw(boardRow + 1, panelLeft + 2, "   YOUR TURN   ");
+        attroff(A_REVERSE);
+
+        // Player name
+        mvprintw(boardRow + 3, panelLeft + 2, "%-16s", m_playerName.c_str());
+
+        // Large marker indicator
+        attroff(COLOR_PAIR(colorPair));
+        attron(COLOR_PAIR(colorPair) | A_BOLD);
+        mvprintw(boardRow + 5, panelLeft + 7, "( %s )", markerStr.c_str());
+        attroff(COLOR_PAIR(colorPair) | A_BOLD);
+    }
+
+    // Draw scoreboard
     BoardRenderer::drawScoreboardCompact(m_scoreboard);
 
-    std::string markerStr = (m_marker == core::Marker::X) ? "X" : "O";
-    std::string status = m_playerName + " (" + markerStr +
-                         ") - Arrows/WASD: move | Enter/Space: place | 1-9: direct | Q: quit";
+    // Status bar with controls
+    std::string status = "Arrows/WASD: move | Enter/Space: place | 1-9: direct | Q: quit";
     BoardRenderer::drawStatusBar(status);
 
     refresh();
@@ -65,9 +109,12 @@ ScreenResult<app::ContinuationResult> GameBoardScreen::handleInput()
                 m_positionSelected = true;
                 return app::ContinuationResult::QUIT;
             }
-            BoardRenderer::drawStatusBar("Cell is already occupied!");
+            // Flash the occupied cell to show it's taken
+            BoardRenderer::flashCell(pos, m_board, 2);
+            beep();
+            BoardRenderer::drawStatusBar("That cell is taken! Choose another.");
             refresh();
-            napms(600);
+            napms(300);
             break;
         }
 
@@ -119,9 +166,12 @@ ScreenResult<app::ContinuationResult> GameBoardScreen::handleInput()
                 m_positionSelected = true;
                 return app::ContinuationResult::QUIT;
             }
-            BoardRenderer::drawStatusBar("Cell is already occupied!");
+            // Flash the occupied cell to show it's taken
+            BoardRenderer::flashCell(m_selectedCell, m_board, 2);
+            beep();
+            BoardRenderer::drawStatusBar("That cell is taken! Choose another.");
             refresh();
-            napms(600);
+            napms(300);
             break;
         }
 

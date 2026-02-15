@@ -2,18 +2,37 @@
 #include "presentation/ncurses/Colors.hpp"
 
 #include <ncurses.h>
+#include <algorithm>
 
 namespace game::view
 {
+
+namespace
+{
+
+constexpr std::array<std::array<int, 3>, 8> WIN_PATTERNS = {{
+    {0, 1, 2}, {3, 4, 5}, {6, 7, 8},  // Rows
+    {0, 3, 6}, {1, 4, 7}, {2, 5, 8},  // Columns
+    {0, 4, 8}, {2, 4, 6}              // Diagonals
+}};
+
+} // anonymous namespace
 
 bool BoardRenderer::checkMinimumTerminalSize()
 {
     if (LINES < MIN_ROWS || COLS < MIN_COLS)
     {
         clear();
-        mvprintw(0, 0, "Terminal too small! Need at least %dx%d, have %dx%d.",
+        attron(COLOR_PAIR(colors::STATUS) | A_BOLD);
+        mvprintw(LINES / 2 - 1, (COLS - 40) / 2,
+                 "Terminal too small!");
+        attroff(A_BOLD);
+        mvprintw(LINES / 2, (COLS - 40) / 2,
+                 "Need at least %dx%d, have %dx%d",
                  MIN_COLS, MIN_ROWS, COLS, LINES);
-        mvprintw(1, 0, "Please resize your terminal and press any key.");
+        mvprintw(LINES / 2 + 2, (COLS - 30) / 2,
+                 "Please resize and press any key.");
+        attroff(COLOR_PAIR(colors::STATUS));
         refresh();
         getch();
         return false;
@@ -21,29 +40,83 @@ bool BoardRenderer::checkMinimumTerminalSize()
     return true;
 }
 
+bool BoardRenderer::useCompactTitle()
+{
+    return COLS < FULL_TITLE_WIDTH + 10;
+}
+
+int BoardRenderer::getBoardStartCol()
+{
+    return (COLS - BOARD_WIDTH) / 2;
+}
+
+int BoardRenderer::getBoardStartRow()
+{
+    return getTitleHeight() + 2;
+}
+
+int BoardRenderer::getTitleHeight()
+{
+    return useCompactTitle() ? 5 : 9;
+}
+
+void BoardRenderer::drawCompactTitle()
+{
+    int startCol = (COLS - COMPACT_TITLE_WIDTH) / 2;
+
+    attron(COLOR_PAIR(colors::TITLE) | A_BOLD);
+    mvprintw(1, startCol, " _____ _        _____            _____          ");
+    mvprintw(2, startCol, "|_   _(_)      |_   _|          |_   _|         ");
+    mvprintw(3, startCol, "  | |  _  ___    | | __ _  ___    | | ___   ___ ");
+    mvprintw(4, startCol, "  | | | |/ __|   | |/ _` |/ __|   | |/ _ \\ / _ \\");
+    mvprintw(5, startCol, "  | | | | (__    | | (_| | (__    | | (_) |  __/");
+    mvprintw(6, startCol, "  \\_/ |_|\\___|   \\_/\\__,_|\\___|   \\_/\\___/ \\___|");
+    attroff(COLOR_PAIR(colors::TITLE) | A_BOLD);
+}
+
+void BoardRenderer::drawFullTitle()
+{
+    int startCol = (COLS - FULL_TITLE_WIDTH) / 2;
+
+    attron(COLOR_PAIR(colors::TITLE) | A_BOLD);
+    mvprintw(1, startCol, R"( /######## /######  /######        /######## /######   /######        /######## /######  /########)");
+    mvprintw(2, startCol, R"(|__  ##__/|_  ##_/ /##__  ##      |__  ##__//##__  ## /##__  ##      |__  ##__//##__  ##| ##_____/)");
+    mvprintw(3, startCol, R"(   | ##     | ##  | ##  \__/         | ##  | ##  \ ##| ##  \__/         | ##  | ##  \ ##| ##      )");
+    mvprintw(4, startCol, R"(   | ##     | ##  | ##               | ##  | ########| ##               | ##  | ##  | ##| #####   )");
+    mvprintw(5, startCol, R"(   | ##     | ##  | ##               | ##  | ##__  ##| ##               | ##  | ##  | ##| ##__/   )");
+    mvprintw(6, startCol, R"(   | ##     | ##  | ##    ##         | ##  | ##  | ##| ##    ##         | ##  | ##  | ##| ##      )");
+    mvprintw(7, startCol, R"(   | ##    /######|  ######/         | ##  | ##  | ##|  ######/         | ##  |  ######/| ########)");
+    mvprintw(8, startCol, R"(   |__/   |______/ \______/          |__/  |__/  |__/ \______/          |__/   \______/ |________/)");
+    attroff(COLOR_PAIR(colors::TITLE) | A_BOLD);
+}
+
 void BoardRenderer::drawTitle()
 {
-    attron(COLOR_PAIR(colors::TITLE) | A_BOLD);
-    mvprintw(1, (COLS/2) - 98/2, R"( /######## /######  /######        /######## /######   /######        /######## /######  /########)");
-    mvprintw(2, (COLS/2) - 98/2, R"(|__  ##__/|_  ##_/ /##__  ##      |__  ##__//##__  ## /##__  ##      |__  ##__//##__  ##| ##_____/)");
-    mvprintw(3, (COLS/2) - 98/2, R"(   | ##     | ##  | ##  \__/         | ##  | ##  \ ##| ##  \__/         | ##  | ##  \ ##| ##      )");
-    mvprintw(4, (COLS/2) - 98/2, R"(   | ##     | ##  | ##               | ##  | ########| ##               | ##  | ##  | ##| #####   )");
-    mvprintw(5, (COLS/2) - 98/2, R"(   | ##     | ##  | ##               | ##  | ##__  ##| ##               | ##  | ##  | ##| ##__/   )");
-    mvprintw(6, (COLS/2) - 98/2, R"(   | ##     | ##  | ##    ##         | ##  | ##  | ##| ##    ##         | ##  | ##  | ##| ##      )");
-    mvprintw(7, (COLS/2) - 98/2, R"(   | ##    /######|  ######/         | ##  | ##  | ##|  ######/         | ##  |  ######/| ########)");
-    mvprintw(8, (COLS/2) - 98/2, R"(   |__/   |______/ \______/          |__/  |__/  |__/ \______/          |__/   \______/ |________/)");
-    attroff(COLOR_PAIR(colors::TITLE) | A_BOLD);
+    if (useCompactTitle())
+    {
+        drawCompactTitle();
+    }
+    else
+    {
+        drawFullTitle();
+    }
     refresh();
 }
 
 void BoardRenderer::drawCellContent(int row, int col,
                                      std::optional<core::Marker> marker,
-                                     int cellIndex, bool selected)
+                                     int cellIndex, bool selected, bool winning)
 {
-    int y = BOARD_START_ROW + row * CELL_HEIGHT + 1;
-    int x = BOARD_START_COL + col * CELL_WIDTH + 2;
+    int boardCol = getBoardStartCol();
+    int boardRow = getBoardStartRow();
+    int y = boardRow + 1 + row * (CELL_HEIGHT + 1) + CELL_HEIGHT / 2;
+    int x = boardCol + 2 + col * (CELL_WIDTH + 1) + (CELL_WIDTH - 3) / 2;
 
-    if (selected)
+    if (winning)
+    {
+        attron(COLOR_PAIR(colors::SCORE) | A_BOLD | A_REVERSE);
+    }
+    else if (selected)
     {
         attron(COLOR_PAIR(colors::HIGHLIGHT) | A_BOLD);
     }
@@ -52,63 +125,106 @@ void BoardRenderer::drawCellContent(int row, int col,
     {
         if (marker.value() == core::Marker::X)
         {
-            if (!selected) attron(COLOR_PAIR(colors::MARKER_X) | A_BOLD);
+            if (!selected && !winning) attron(COLOR_PAIR(colors::MARKER_X) | A_BOLD);
             mvprintw(y, x, " X ");
-            if (!selected) attroff(COLOR_PAIR(colors::MARKER_X) | A_BOLD);
+            if (!selected && !winning) attroff(COLOR_PAIR(colors::MARKER_X) | A_BOLD);
         }
         else
         {
-            if (!selected) attron(COLOR_PAIR(colors::MARKER_O) | A_BOLD);
+            if (!selected && !winning) attron(COLOR_PAIR(colors::MARKER_O) | A_BOLD);
             mvprintw(y, x, " O ");
-            if (!selected) attroff(COLOR_PAIR(colors::MARKER_O) | A_BOLD);
+            if (!selected && !winning) attroff(COLOR_PAIR(colors::MARKER_O) | A_BOLD);
         }
     }
     else
     {
-        if (!selected) attron(COLOR_PAIR(colors::EMPTY_CELL) | A_DIM);
+        if (!selected && !winning) attron(COLOR_PAIR(colors::EMPTY_CELL) | A_DIM);
         mvprintw(y, x, " %d ", cellIndex + 1);
-        if (!selected) attroff(COLOR_PAIR(colors::EMPTY_CELL) | A_DIM);
+        if (!selected && !winning) attroff(COLOR_PAIR(colors::EMPTY_CELL) | A_DIM);
     }
 
-    if (selected)
+    if (winning)
+    {
+        attroff(COLOR_PAIR(colors::SCORE) | A_BOLD | A_REVERSE);
+    }
+    else if (selected)
     {
         attroff(COLOR_PAIR(colors::HIGHLIGHT) | A_BOLD);
     }
 }
 
-void BoardRenderer::drawBoard(const core::Board& board, int selectedCell)
+void BoardRenderer::drawBoard(const core::Board& board, int selectedCell,
+                               const std::array<int, 3>* winningCells)
 {
-    // Draw horizontal lines
+    int boardCol = getBoardStartCol();
+    int boardRow = getBoardStartRow();
+
     attron(COLOR_PAIR(colors::BOARD_LINES));
+
+    // Draw outer border with double lines
+    // Top border
+    mvaddch(boardRow, boardCol, ACS_ULCORNER);
+    for (int col = 0; col < 3; ++col)
+    {
+        for (int i = 0; i < CELL_WIDTH; ++i)
+        {
+            addch(ACS_HLINE);
+        }
+        if (col < 2) addch(ACS_TTEE);
+    }
+    addch(ACS_URCORNER);
+
+    // Middle rows
     for (int row = 0; row < 3; ++row)
     {
-        int y = BOARD_START_ROW + row * CELL_HEIGHT;
-        for (int col = 0; col < 3; ++col)
+        // Cell content rows
+        for (int cy = 0; cy < CELL_HEIGHT; ++cy)
         {
-            int x = BOARD_START_COL + col * CELL_WIDTH;
-            for (int cx = 0; cx < CELL_WIDTH; ++cx)
+            int y = boardRow + 1 + row * (CELL_HEIGHT + 1) + cy;
+            mvaddch(y, boardCol, ACS_VLINE);
+            for (int col = 0; col < 3; ++col)
             {
-                mvaddch(y, x + cx, ACS_HLINE);
-                mvaddch(y + CELL_HEIGHT, x + cx, ACS_HLINE);
+                for (int i = 0; i < CELL_WIDTH; ++i)
+                {
+                    addch(' ');
+                }
+                addch(ACS_VLINE);
             }
-            for (int cy = 0; cy <= CELL_HEIGHT; ++cy)
+        }
+
+        // Horizontal separator (except after last row)
+        if (row < 2)
+        {
+            int y = boardRow + 1 + row * (CELL_HEIGHT + 1) + CELL_HEIGHT;
+            mvaddch(y, boardCol, ACS_LTEE);
+            for (int col = 0; col < 3; ++col)
             {
-                mvaddch(y + cy, x, ACS_VLINE);
-                mvaddch(y + cy, x + CELL_WIDTH, ACS_VLINE);
+                for (int i = 0; i < CELL_WIDTH; ++i)
+                {
+                    addch(ACS_HLINE);
+                }
+                if (col < 2)
+                {
+                    addch(ACS_PLUS);
+                }
             }
+            addch(ACS_RTEE);
         }
     }
 
-    // Draw intersection characters
-    for (int row = 0; row <= 3; ++row)
+    // Bottom border
+    int bottomY = boardRow + 1 + 2 * (CELL_HEIGHT + 1) + CELL_HEIGHT;
+    mvaddch(bottomY, boardCol, ACS_LLCORNER);
+    for (int col = 0; col < 3; ++col)
     {
-        for (int col = 0; col <= 3; ++col)
+        for (int i = 0; i < CELL_WIDTH; ++i)
         {
-            int y = BOARD_START_ROW + row * CELL_HEIGHT;
-            int x = BOARD_START_COL + col * CELL_WIDTH;
-            mvaddch(y, x, ACS_PLUS);
+            addch(ACS_HLINE);
         }
+        if (col < 2) addch(ACS_BTEE);
     }
+    addch(ACS_LRCORNER);
+
     attroff(COLOR_PAIR(colors::BOARD_LINES));
 
     // Draw cell contents
@@ -119,7 +235,9 @@ void BoardRenderer::drawBoard(const core::Board& board, int selectedCell)
             int cellIndex = row * 3 + col;
             core::Position pos{cellIndex};
             bool isSelected = (cellIndex == selectedCell);
-            drawCellContent(row, col, board.getMarker(pos), cellIndex, isSelected);
+            bool isWinning = winningCells &&
+                std::find(winningCells->begin(), winningCells->end(), cellIndex) != winningCells->end();
+            drawCellContent(row, col, board.getMarker(pos), cellIndex, isSelected, isWinning);
         }
     }
 }
@@ -130,43 +248,176 @@ void BoardRenderer::drawStatusBar(std::string_view message)
     attron(COLOR_PAIR(colors::STATUS));
     move(maxY - 2, 0);
     clrtoeol();
-    mvprintw(maxY - 2, BOARD_START_COL, "%.*s",
+    int startCol = (COLS - static_cast<int>(message.size())) / 2;
+    if (startCol < 0) startCol = 0;
+    mvprintw(maxY - 2, startCol, "%.*s",
              static_cast<int>(message.size()), message.data());
     attroff(COLOR_PAIR(colors::STATUS));
 }
 
 void BoardRenderer::drawScoreboard(const app::Session& session)
 {
-    int scoreRow = BOARD_START_ROW + 3 * CELL_HEIGHT + 2;
+    int boardRow = getBoardStartRow();
+    int scoreRow = boardRow + BOARD_HEIGHT + 1;
+    int centerCol = COLS / 2;
 
     attron(COLOR_PAIR(colors::SCORE) | A_BOLD);
-    mvprintw(scoreRow, BOARD_START_COL, "SCOREBOARD");
-    attroff(COLOR_PAIR(colors::SCORE) | A_BOLD);
+    const char* title = "SCOREBOARD";
+    mvprintw(scoreRow, centerCol - 5, "%s", title);
+    attroff(A_BOLD);
 
     const auto& sb = session.getScoreboard();
-    mvprintw(scoreRow + 1, BOARD_START_COL,
-             "%s (X): %d    %s (O): %d    Draws: %d",
-             session.getPlayer1()->getName().c_str(), sb.getPlayer1Wins(),
-             session.getPlayer2()->getName().c_str(), sb.getPlayer2Wins(),
-             sb.getDraws());
+    std::string p1Name = session.getPlayer1()->getName();
+    std::string p2Name = session.getPlayer2()->getName();
+
+    // Calculate bar widths (max 10 chars)
+    int maxWins = std::max({sb.getPlayer1Wins(), sb.getPlayer2Wins(), sb.getDraws(), 1});
+    int p1BarLen = (sb.getPlayer1Wins() * 10) / maxWins;
+    int p2BarLen = (sb.getPlayer2Wins() * 10) / maxWins;
+    int drawBarLen = (sb.getDraws() * 10) / maxWins;
+
+    // Player 1 score
+    attron(COLOR_PAIR(colors::MARKER_X));
+    mvprintw(scoreRow + 2, centerCol - 20, "%-12s", p1Name.c_str());
+    for (int i = 0; i < 10; ++i)
+    {
+        addch(i < p1BarLen ? ACS_CKBOARD : ACS_BULLET);
+    }
+    printw(" %d", sb.getPlayer1Wins());
+    attroff(COLOR_PAIR(colors::MARKER_X));
+
+    // Player 2 score
+    attron(COLOR_PAIR(colors::MARKER_O));
+    mvprintw(scoreRow + 3, centerCol - 20, "%-12s", p2Name.c_str());
+    for (int i = 0; i < 10; ++i)
+    {
+        addch(i < p2BarLen ? ACS_CKBOARD : ACS_BULLET);
+    }
+    printw(" %d", sb.getPlayer2Wins());
+    attroff(COLOR_PAIR(colors::MARKER_O));
+
+    // Draws
+    attron(COLOR_PAIR(colors::STATUS));
+    mvprintw(scoreRow + 4, centerCol - 20, "%-12s", "Draws");
+    for (int i = 0; i < 10; ++i)
+    {
+        addch(i < drawBarLen ? ACS_CKBOARD : ACS_BULLET);
+    }
+    printw(" %d", sb.getDraws());
+    attroff(COLOR_PAIR(colors::STATUS));
+
+    attroff(COLOR_PAIR(colors::SCORE));
 }
 
 void BoardRenderer::drawScoreboardCompact(const app::Scoreboard* scoreboard)
 {
     if (!scoreboard) return;
 
-    int scoreRow = BOARD_START_ROW + 3 * CELL_HEIGHT + 2;
-    attron(COLOR_PAIR(colors::SCORE) | A_BOLD);
-    mvprintw(scoreRow, BOARD_START_COL, "SCORE");
-    attroff(COLOR_PAIR(colors::SCORE) | A_BOLD);
+    int boardRow = getBoardStartRow();
+    int scoreRow = boardRow + BOARD_HEIGHT + 1;
+    int centerCol = COLS / 2;
 
-    attron(COLOR_PAIR(colors::SCORE));
-    mvprintw(scoreRow, BOARD_START_COL + 6,
+    attron(COLOR_PAIR(colors::SCORE) | A_BOLD);
+    mvprintw(scoreRow, centerCol - 15, "SCORE");
+    attroff(A_BOLD);
+
+    mvprintw(scoreRow, centerCol - 8,
              "P1: %d  P2: %d  Draws: %d",
              scoreboard->getPlayer1Wins(),
              scoreboard->getPlayer2Wins(),
              scoreboard->getDraws());
     attroff(COLOR_PAIR(colors::SCORE));
+}
+
+void BoardRenderer::flashCell(int cellIndex, const core::Board& board, int times)
+{
+    int row = cellIndex / 3;
+    int col = cellIndex % 3;
+    auto marker = board.getMarker(core::Position{cellIndex});
+
+    for (int i = 0; i < times; ++i)
+    {
+        // Flash on (highlighted)
+        drawCellContent(row, col, marker, cellIndex, true, false);
+        refresh();
+        napms(80);
+
+        // Flash off (normal)
+        drawCellContent(row, col, marker, cellIndex, false, false);
+        refresh();
+        napms(80);
+    }
+}
+
+void BoardRenderer::highlightWinningLine(const core::Board& board,
+                                          const std::array<int, 3>& winningCells)
+{
+    for (int flash = 0; flash < 3; ++flash)
+    {
+        // Draw winning cells highlighted
+        for (int cellIndex : winningCells)
+        {
+            int row = cellIndex / 3;
+            int col = cellIndex % 3;
+            auto marker = board.getMarker(core::Position{cellIndex});
+            drawCellContent(row, col, marker, cellIndex, false, true);
+        }
+        refresh();
+        napms(200);
+
+        // Draw winning cells normal
+        for (int cellIndex : winningCells)
+        {
+            int row = cellIndex / 3;
+            int col = cellIndex % 3;
+            auto marker = board.getMarker(core::Position{cellIndex});
+            drawCellContent(row, col, marker, cellIndex, false, false);
+        }
+        refresh();
+        napms(100);
+    }
+
+    // Leave them highlighted
+    for (int cellIndex : winningCells)
+    {
+        int row = cellIndex / 3;
+        int col = cellIndex % 3;
+        auto marker = board.getMarker(core::Position{cellIndex});
+        drawCellContent(row, col, marker, cellIndex, false, true);
+    }
+    refresh();
+}
+
+std::optional<std::array<int, 3>>
+BoardRenderer::getWinningCells(const core::Board& board, core::GameStatus status)
+{
+    if (status != core::GameStatus::XWins && status != core::GameStatus::OWins)
+    {
+        return std::nullopt;
+    }
+
+    core::Marker winner = (status == core::GameStatus::XWins)
+        ? core::Marker::X : core::Marker::O;
+
+    for (const auto& pattern : WIN_PATTERNS)
+    {
+        bool allMatch = true;
+        for (int cellIndex : pattern)
+        {
+            auto marker = board.getMarker(core::Position{cellIndex});
+            if (!marker.has_value() || marker.value() != winner)
+            {
+                allMatch = false;
+                break;
+            }
+        }
+        if (allMatch)
+        {
+            return pattern;
+        }
+    }
+
+    return std::nullopt;
 }
 
 } // namespace game::view

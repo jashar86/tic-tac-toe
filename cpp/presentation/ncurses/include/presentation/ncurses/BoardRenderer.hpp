@@ -4,7 +4,10 @@
 #include "application/Scoreboard.hpp"
 #include "application/Session.hpp"
 #include "core/Board.hpp"
+#include "core/GameStatus.hpp"
 
+#include <array>
+#include <optional>
 #include <string_view>
 
 namespace game::view
@@ -13,18 +16,29 @@ namespace game::view
 class BoardRenderer
 {
 public:
-    static constexpr int BOARD_START_ROW = 10;
-    static constexpr int BOARD_START_COL = 4;
-    static constexpr int CELL_WIDTH = 7;
+    static constexpr int CELL_WIDTH = 9;
     static constexpr int CELL_HEIGHT = 3;
-    static constexpr int MIN_ROWS = 22;
-    static constexpr int MIN_COLS = 30;
+    static constexpr int BOARD_WIDTH = CELL_WIDTH * 3 + 4;
+    static constexpr int BOARD_HEIGHT = CELL_HEIGHT * 3 + 4;
+    static constexpr int MIN_ROWS = 24;
+    static constexpr int MIN_COLS = 80;
+    static constexpr int COMPACT_TITLE_WIDTH = 45;
+    static constexpr int FULL_TITLE_WIDTH = 98;
 
     [[nodiscard]] static bool checkMinimumTerminalSize();
 
+    [[nodiscard]] static bool useCompactTitle();
+
+    [[nodiscard]] static int getBoardStartCol();
+
+    [[nodiscard]] static int getBoardStartRow();
+
+    [[nodiscard]] static int getTitleHeight();
+
     static void drawTitle();
 
-    static void drawBoard(const core::Board& board, int selectedCell = -1);
+    static void drawBoard(const core::Board& board, int selectedCell = -1,
+                          const std::array<int, 3>* winningCells = nullptr);
 
     static void drawStatusBar(std::string_view message);
 
@@ -32,10 +46,21 @@ public:
 
     static void drawScoreboardCompact(const app::Scoreboard* scoreboard);
 
+    static void flashCell(int cellIndex, const core::Board& board, int times = 3);
+
+    static void highlightWinningLine(const core::Board& board,
+                                      const std::array<int, 3>& winningCells);
+
+    [[nodiscard]] static std::optional<std::array<int, 3>>
+        getWinningCells(const core::Board& board, core::GameStatus status);
+
 private:
     static void drawCellContent(int row, int col,
                                 std::optional<core::Marker> marker,
-                                int cellIndex, bool selected);
+                                int cellIndex, bool selected, bool winning);
+
+    static void drawCompactTitle();
+    static void drawFullTitle();
 };
 
 } // namespace game::view

@@ -4,6 +4,7 @@
 #include "core/GameStatus.hpp"
 
 #include <ncurses.h>
+#include <string>
 
 namespace game::view
 {
@@ -17,42 +18,69 @@ void GameResultScreen::draw()
 {
     clear();
     BoardRenderer::drawTitle();
-    BoardRenderer::drawBoard(m_session.getGameState().getBoard());
 
-    int resultRow = BoardRenderer::BOARD_START_ROW + 3 * BoardRenderer::CELL_HEIGHT + 2;
+    const auto& board = m_session.getGameState().getBoard();
+    auto status = m_session.getGameState().getStatus();
+    auto winningCells = BoardRenderer::getWinningCells(board, status);
 
-    switch (m_session.getGameState().getStatus())
+    // Draw board with winning cells highlighted
+    if (winningCells.has_value())
+    {
+        BoardRenderer::drawBoard(board, -1, &winningCells.value());
+    }
+    else
+    {
+        BoardRenderer::drawBoard(board);
+    }
+
+    int boardRow = BoardRenderer::getBoardStartRow();
+    int resultRow = boardRow + BoardRenderer::BOARD_HEIGHT + 1;
+    int centerCol = COLS / 2;
+
+    std::string resultMsg;
+    int colorPair = colors::STATUS;
+
+    switch (status)
     {
         case core::GameStatus::XWins:
-            attron(COLOR_PAIR(colors::MARKER_X) | A_BOLD);
-            mvprintw(resultRow, BoardRenderer::BOARD_START_COL,
-                     "%s (X) WINS!", m_session.getPlayer1()->getName().c_str());
-            attroff(COLOR_PAIR(colors::MARKER_X) | A_BOLD);
+            resultMsg = m_session.getPlayer1()->getName() + " (X) WINS!";
+            colorPair = colors::MARKER_X;
             break;
         case core::GameStatus::OWins:
-            attron(COLOR_PAIR(colors::MARKER_O) | A_BOLD);
-            mvprintw(resultRow, BoardRenderer::BOARD_START_COL,
-                     "%s (O) WINS!", m_session.getPlayer2()->getName().c_str());
-            attroff(COLOR_PAIR(colors::MARKER_O) | A_BOLD);
+            resultMsg = m_session.getPlayer2()->getName() + " (O) WINS!";
+            colorPair = colors::MARKER_O;
             break;
         case core::GameStatus::Draw:
-            attron(COLOR_PAIR(colors::STATUS) | A_BOLD);
-            mvprintw(resultRow, BoardRenderer::BOARD_START_COL, "It's a DRAW!");
-            attroff(COLOR_PAIR(colors::STATUS) | A_BOLD);
+            resultMsg = "It's a DRAW!";
+            colorPair = colors::STATUS;
             break;
         default:
             break;
     }
 
+    // Display result message centered
+    attron(COLOR_PAIR(colorPair) | A_BOLD);
+    mvprintw(resultRow, centerCol - static_cast<int>(resultMsg.size()) / 2,
+             "%s", resultMsg.c_str());
+    attroff(COLOR_PAIR(colorPair) | A_BOLD);
+
+    // Scoreboard
     BoardRenderer::drawScoreboard(m_session);
 
-    int promptRow = resultRow + 4;
+    // Play again prompt
+    int promptRow = resultRow + 6;
     attron(COLOR_PAIR(colors::STATUS));
-    mvprintw(promptRow, BoardRenderer::BOARD_START_COL,
-             "Play again? (Y)es / (N)o");
+    const char* prompt = "Play again? (Y)es / (N)o";
+    mvprintw(promptRow, centerCol - 12, "%s", prompt);
     attroff(COLOR_PAIR(colors::STATUS));
 
     refresh();
+
+    // Animate winning line if there is one
+    if (winningCells.has_value())
+    {
+        BoardRenderer::highlightWinningLine(board, winningCells.value());
+    }
 }
 
 ScreenResult<app::ContinuationResult> GameResultScreen::handleInput()

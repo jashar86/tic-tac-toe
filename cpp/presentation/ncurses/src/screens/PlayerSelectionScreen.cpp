@@ -13,14 +13,16 @@ namespace
 
 struct PlayerTypeOption
 {
+    const char* icon;
     const char* label;
+    const char* description;
     PlayerType type;
 };
 
 static constexpr std::array<PlayerTypeOption, 3> PLAYER_TYPE_OPTIONS = {{
-    {"Human",            PlayerType::Human},
-    {"Computer (Easy)",  PlayerType::CpuEasy},
-    {"Computer (Hard)",  PlayerType::CpuHard}
+    {"[H]", "Human",            "You control this player",           PlayerType::Human},
+    {"[E]", "Computer (Easy)",  "Makes random moves",                 PlayerType::CpuEasy},
+    {"[X]", "Computer (Hard)",  "Plays optimally - never loses",      PlayerType::CpuHard}
 }};
 
 } // anonymous namespace
@@ -36,27 +38,62 @@ void PlayerSelectionScreen::draw()
     erase();
     BoardRenderer::drawTitle();
 
-    int menuRow = BoardRenderer::BOARD_START_ROW + 1;
-    int menuCol = BoardRenderer::BOARD_START_COL;
+    int centerCol = COLS / 2;
+    int menuRow = BoardRenderer::getTitleHeight() + 3;
 
+    // Player selection header
     attron(COLOR_PAIR(colors::TITLE) | A_BOLD);
-    mvprintw(menuRow, menuCol, "Player %d (%.*s) - Select type:",
-             m_playerNumber,
-             static_cast<int>(m_markerLabel.size()), m_markerLabel.data());
+    std::string header = "Player " + std::to_string(m_playerNumber) + " (" +
+                         std::string(m_markerLabel) + ") - Select type:";
+    mvprintw(menuRow, centerCol - static_cast<int>(header.size()) / 2, "%s", header.c_str());
     attroff(COLOR_PAIR(colors::TITLE) | A_BOLD);
 
+    // Draw menu box
+    int boxWidth = 40;
+    int boxLeft = centerCol - boxWidth / 2;
+    int boxTop = menuRow + 2;
+
+    attron(COLOR_PAIR(colors::BOARD_LINES));
+    mvaddch(boxTop, boxLeft, ACS_ULCORNER);
+    for (int i = 1; i < boxWidth - 1; ++i) addch(ACS_HLINE);
+    addch(ACS_URCORNER);
+
+    for (int row = 0; row < static_cast<int>(PLAYER_TYPE_OPTIONS.size()) * 2 + 1; ++row)
+    {
+        mvaddch(boxTop + 1 + row, boxLeft, ACS_VLINE);
+        mvaddch(boxTop + 1 + row, boxLeft + boxWidth - 1, ACS_VLINE);
+    }
+
+    int boxBottom = boxTop + static_cast<int>(PLAYER_TYPE_OPTIONS.size()) * 2 + 2;
+    mvaddch(boxBottom, boxLeft, ACS_LLCORNER);
+    for (int i = 1; i < boxWidth - 1; ++i) addch(ACS_HLINE);
+    addch(ACS_LRCORNER);
+    attroff(COLOR_PAIR(colors::BOARD_LINES));
+
+    // Draw options
     for (int i = 0; i < static_cast<int>(PLAYER_TYPE_OPTIONS.size()); ++i)
     {
-        int row = menuRow + 2 + i;
+        int optionRow = boxTop + 2 + i * 2;
+        const auto& option = PLAYER_TYPE_OPTIONS[i];
+
         if (i == m_selectedIndex)
         {
             attron(COLOR_PAIR(colors::HIGHLIGHT) | A_BOLD);
-            mvprintw(row, menuCol, " > %s", PLAYER_TYPE_OPTIONS[i].label);
+            mvprintw(optionRow, boxLeft + 2, " > %s %s",
+                     option.icon, option.label);
             attroff(COLOR_PAIR(colors::HIGHLIGHT) | A_BOLD);
+
+            // Show description for selected item
+            attron(COLOR_PAIR(colors::STATUS) | A_DIM);
+            mvprintw(optionRow + 1, boxLeft + 6, "%s", option.description);
+            attroff(COLOR_PAIR(colors::STATUS) | A_DIM);
         }
         else
         {
-            mvprintw(row, menuCol, "   %s", PLAYER_TYPE_OPTIONS[i].label);
+            attron(COLOR_PAIR(colors::EMPTY_CELL));
+            mvprintw(optionRow, boxLeft + 2, "   %s %s",
+                     option.icon, option.label);
+            attroff(COLOR_PAIR(colors::EMPTY_CELL));
         }
     }
 
