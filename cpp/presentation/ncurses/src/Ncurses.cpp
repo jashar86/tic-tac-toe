@@ -93,9 +93,34 @@ bool checkMinimumTerminalSize()
 void drawTitle()
 {
     attron(COLOR_PAIR(colors::TITLE) | A_BOLD);
-    mvprintw(1, BOARD_START_COL, "TIC-TAC-TOE");
+    mvprintw(1, (COLS/2) - 98/2, R"( /######## /######  /######        /######## /######   /######        /######## /######  /########)");
+    mvprintw(2, (COLS/2) - 98/2, R"(|__  ##__/|_  ##_/ /##__  ##      |__  ##__//##__  ## /##__  ##      |__  ##__//##__  ##| ##_____/)");
+    mvprintw(3, (COLS/2) - 98/2, R"(   | ##     | ##  | ##  \__/         | ##  | ##  \ ##| ##  \__/         | ##  | ##  \ ##| ##      )");
+    mvprintw(4, (COLS/2) - 98/2, R"(   | ##     | ##  | ##               | ##  | ########| ##               | ##  | ##  | ##| #####   )");
+    mvprintw(5, (COLS/2) - 98/2, R"(   | ##     | ##  | ##               | ##  | ##__  ##| ##               | ##  | ##  | ##| ##__/   )");
+    mvprintw(6, (COLS/2) - 98/2, R"(   | ##     | ##  | ##    ##         | ##  | ##  | ##| ##    ##         | ##  | ##  | ##| ##      )");
+    mvprintw(7, (COLS/2) - 98/2, R"(   | ##    /######|  ######/         | ##  | ##  | ##|  ######/         | ##  |  ######/| ########)");
+    mvprintw(8, (COLS/2) - 98/2, R"(   |__/   |______/ \______/          |__/  |__/  |__/ \______/          |__/   \______/ |________/)");
     attroff(COLOR_PAIR(colors::TITLE) | A_BOLD);
-    mvprintw(2, BOARD_START_COL, "---------------------");
+
+    refresh();
+    WINDOW *my_window = newwin(4, 25, 10, 4);
+    wbkgd(my_window, COLOR_PAIR(colors::TITLE));
+    // box(my_window, 0, 0); 
+    mvwprintw(my_window, 0, 2, "Player 1");
+    mvwprintw(my_window, 1, 4, "Type: Human");
+    mvwprintw(my_window, 2, 4, "Wins: 0");
+    wrefresh(my_window); 
+    delwin(my_window);
+
+    my_window = newwin(4, 25, 10, COLS-29);
+    box(my_window, 0, 0); 
+    mvwprintw(my_window, 0, 2, "Player 1");
+    mvwprintw(my_window, 1, 4, "Type: Human");
+    mvwprintw(my_window, 2, 4, "Wins: 0");
+    wrefresh(my_window); 
+    delwin(my_window);
+
 }
 
 static void drawCellContent(int row, int col,

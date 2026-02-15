@@ -7,21 +7,55 @@
 
 #include <iostream>
 #include <memory>
+#include <string>
 
 namespace game::view 
 {
-
 namespace 
 {
+
+enum class Color
+{
+    DARK_GRAY,
+    RED,
+    BLUE
+};
+
+std::string add_color(std::string text, Color const& color)
+{
+    std::string color_start{};
+    std::string color_end{"\033[0m"};
+    switch (color)
+    {
+        case Color::DARK_GRAY: color_start = "\033[90m";
+            break;
+        case Color::RED: color_start = "\033[31m";
+            break;
+        case Color::BLUE: color_start = "\033[34m";
+            break;
+        default: color_end = "";
+    }
+    return color_start + text + color_end;
+}
+
 std::string to_string(std::optional<core::Marker> const& marker, char default_val=' ')
 {
     if (marker)
     {
-        return (marker.value() == core::Marker::X) ? "\033[31mX\033[0m" : "\033[34mO\033[0m"; 
+        if (marker.value() == core::Marker::X)
+        {
+            return add_color("X", Color::RED); 
+        }
+        else 
+        {
+            return add_color("O", Color::BLUE);
+        }
     }
     else 
     {
-        return std::string{"\033[90m"} + default_val + "\033[0m";
+        std::string text{};
+        text += default_val;
+        return add_color(text, Color::DARK_GRAY);
     }
 }
 

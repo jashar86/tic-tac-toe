@@ -1,6 +1,7 @@
 # Presentation Layer - ncurses UI implementation
 # Contains: ncurses-based terminal UI for tic-tac-toe
 
+set(CURSES_NEED_WIDE TRUE)
 find_package(Curses REQUIRED)
 
 add_library(presentation_ncurses
@@ -13,6 +14,7 @@ target_include_directories(presentation_ncurses
         $<INSTALL_INTERFACE:include>
     PRIVATE
         ${CURSES_INCLUDE_DIRS}
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
 )
 
 target_link_libraries(presentation_ncurses
