@@ -39,7 +39,7 @@ void GameBoardScreen::draw()
     int boardCol = BoardRenderer::getBoardStartCol();
     int boardRow = BoardRenderer::getBoardStartRow();
     int panelWidth = 20;
-    int panelLeft = boardCol + BoardRenderer::BOARD_WIDTH + 3;
+    int panelLeft = boardCol + BoardRenderer::getBoardWidth() + 3;
 
     // Only draw side panel if there's room
     if (panelLeft + panelWidth < COLS)

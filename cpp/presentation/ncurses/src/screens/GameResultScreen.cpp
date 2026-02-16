@@ -61,35 +61,8 @@ void GameResultScreen::draw()
     }
 
     int boardRow = BoardRenderer::getBoardStartRow();
-    int resultRow = boardRow + BoardRenderer::BOARD_HEIGHT + 1;
+    int resultRow = boardRow + BoardRenderer::getBoardHeight() + 1;
     int centerCol = COLS / 2;
-
-    std::string resultMsg;
-    int colorPair = colors::STATUS;
-
-    switch (status)
-    {
-        case core::GameStatus::XWins:
-            resultMsg = m_session.getPlayer1()->getName() + " (X) WINS!";
-            colorPair = colors::MARKER_X;
-            break;
-        case core::GameStatus::OWins:
-            resultMsg = m_session.getPlayer2()->getName() + " (O) WINS!";
-            colorPair = colors::MARKER_O;
-            break;
-        case core::GameStatus::Draw:
-            resultMsg = "It's a DRAW!";
-            colorPair = colors::STATUS;
-            break;
-        default:
-            break;
-    }
-
-    // Display result message centered
-    attron(COLOR_PAIR(colorPair) | A_BOLD);
-    mvprintw(resultRow, centerCol - static_cast<int>(resultMsg.size()) / 2,
-             "%s", resultMsg.c_str());
-    attroff(COLOR_PAIR(colorPair) | A_BOLD);
 
     // Scoreboard
     BoardRenderer::drawScoreboard(m_session);

@@ -16,16 +16,25 @@ namespace game::view
 class BoardRenderer
 {
 public:
-    static constexpr int CELL_WIDTH = 9;
-    static constexpr int CELL_HEIGHT = 3;
-    static constexpr int BOARD_WIDTH = CELL_WIDTH * 3 + 4;
-    static constexpr int BOARD_HEIGHT = CELL_HEIGHT * 3 + 4;
+    static constexpr int STD_CELL_WIDTH    = 9;
+    static constexpr int STD_CELL_HEIGHT   = 3;
+    static constexpr int LARGE_CELL_WIDTH  = 13;
+    static constexpr int LARGE_CELL_HEIGHT = 7;
     static constexpr int MIN_ROWS = 24;
     static constexpr int MIN_COLS = 80;
+    static constexpr int LARGE_BOARD_MIN_ROWS = 40;
+    static constexpr int LARGE_BOARD_MIN_COLS = 100;
     static constexpr int COMPACT_TITLE_WIDTH = 45;
     static constexpr int FULL_TITLE_WIDTH = 98;
 
     [[nodiscard]] static bool checkMinimumTerminalSize();
+
+    [[nodiscard]] static bool useLargeBoard();
+
+    [[nodiscard]] static int getCellWidth();
+    [[nodiscard]] static int getCellHeight();
+    [[nodiscard]] static int getBoardWidth();
+    [[nodiscard]] static int getBoardHeight();
 
     [[nodiscard]] static bool useCompactTitle();
 

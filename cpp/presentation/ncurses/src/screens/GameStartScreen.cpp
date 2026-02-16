@@ -49,7 +49,7 @@ void GameStartScreen::draw()
 
     // Player 1 (X) - left aligned from center
     attron(COLOR_PAIR(colors::MARKER_X) | A_BOLD);
-    mvprintw(centerRow + 1, centerCol - static_cast<int>(p1.size()) - 4,
+    mvprintw(centerRow + 1, centerCol - static_cast<int>(p1.size()) - 6,
              "%s (X)", p1.c_str());
     attroff(COLOR_PAIR(colors::MARKER_X) | A_BOLD);
 
