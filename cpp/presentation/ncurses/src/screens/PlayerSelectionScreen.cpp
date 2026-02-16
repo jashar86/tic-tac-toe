@@ -35,18 +35,39 @@ PlayerSelectionScreen::PlayerSelectionScreen(int playerNumber, std::string_view 
 
 void PlayerSelectionScreen::draw()
 {
+    // Screen wipe transition when entering player 2 selection
+    if (m_isFirstDraw && m_playerNumber > 1)
+    {
+        BoardRenderer::screenWipe(150);
+    }
+    m_isFirstDraw = false;
+
     erase();
     BoardRenderer::drawTitle();
 
     int centerCol = COLS / 2;
-    int menuRow = BoardRenderer::getTitleHeight() + 3;
+    int menuRow = BoardRenderer::getTitleHeight() + 2;
 
-    // Player selection header
-    attron(COLOR_PAIR(colors::TITLE) | A_BOLD);
+    // Progress indicator: filled dot for current/done, empty for pending
+    {
+        attron(COLOR_PAIR(colors::STATUS));
+        std::string progress = "Player Setup:  ";
+        progress += (m_playerNumber >= 1) ? "(1)" : " 1 ";
+        progress += "  ";
+        progress += (m_playerNumber >= 2) ? "(2)" : " 2 ";
+        mvprintw(menuRow, centerCol - static_cast<int>(progress.size()) / 2,
+                 "%s", progress.c_str());
+        attroff(COLOR_PAIR(colors::STATUS));
+        menuRow += 2;
+    }
+
+    // Header styled with the player's marker color
+    int markerColor = (m_markerLabel == "X") ? colors::MARKER_X : colors::MARKER_O;
+    attron(COLOR_PAIR(markerColor) | A_BOLD);
     std::string header = "Player " + std::to_string(m_playerNumber) + " (" +
                          std::string(m_markerLabel) + ") - Select type:";
     mvprintw(menuRow, centerCol - static_cast<int>(header.size()) / 2, "%s", header.c_str());
-    attroff(COLOR_PAIR(colors::TITLE) | A_BOLD);
+    attroff(COLOR_PAIR(markerColor) | A_BOLD);
 
     // Draw menu box
     int boxWidth = 40;
@@ -149,6 +170,52 @@ ScreenResult<app::ContinuationResult> PlayerSelectionScreen::handleInput()
     }
 }
 
+void PlayerSelectionScreen::showConfirmation()
+{
+    int markerColor = (m_markerLabel == "X") ? colors::MARKER_X : colors::MARKER_O;
+
+    const char* selectedLabel = "Unknown";
+    for (const auto& opt : PLAYER_TYPE_OPTIONS)
+    {
+        if (opt.type == m_selectedType)
+        {
+            selectedLabel = opt.label;
+            break;
+        }
+    }
+
+    std::string confirmMsg = "Player " + std::to_string(m_playerNumber) +
+                             " (" + std::string(m_markerLabel) + "): " +
+                             selectedLabel + "  [READY]";
+
+    int centerRow = LINES / 2;
+    int centerCol = COLS / 2;
+    int msgCol = centerCol - static_cast<int>(confirmMsg.size()) / 2;
+
+    // Two quick flashes to draw attention
+    for (int flash = 0; flash < 2; ++flash)
+    {
+        attron(COLOR_PAIR(markerColor) | A_BOLD | A_REVERSE);
+        mvprintw(centerRow, msgCol, "%s", confirmMsg.c_str());
+        attroff(COLOR_PAIR(markerColor) | A_BOLD | A_REVERSE);
+        refresh();
+        napms(200);
+
+        attron(COLOR_PAIR(markerColor) | A_BOLD);
+        mvprintw(centerRow, msgCol, "%s", confirmMsg.c_str());
+        attroff(COLOR_PAIR(markerColor) | A_BOLD);
+        refresh();
+        napms(120);
+    }
+
+    // Hold the confirmed state briefly before transitioning
+    attron(COLOR_PAIR(markerColor) | A_BOLD | A_REVERSE);
+    mvprintw(centerRow, msgCol, "%s", confirmMsg.c_str());
+    attroff(COLOR_PAIR(markerColor) | A_BOLD | A_REVERSE);
+    refresh();
+    napms(450);
+}
+
 ScreenResult<PlayerType> PlayerSelectionScreen::run()
 {
     while (true)
@@ -161,6 +228,7 @@ ScreenResult<PlayerType> PlayerSelectionScreen::run()
         }
         if (result.value() == app::ContinuationResult::QUIT)
         {
+            showConfirmation();
             return m_selectedType;
         }
     }

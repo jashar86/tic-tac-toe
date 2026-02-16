@@ -30,10 +30,13 @@ public:
     [[nodiscard]] PlayerType getSelectedType() const { return m_selectedType; }
 
 private:
+    void showConfirmation();
+
     int m_playerNumber;
     std::string_view m_markerLabel;
     int m_selectedIndex{0};
     PlayerType m_selectedType{PlayerType::Human};
+    bool m_isFirstDraw{true};
 };
 
 } // namespace game::view
